@@ -1,0 +1,59 @@
+name: Deploy Slidev to Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build All Slides
+        env:
+          NODE_ENV: production
+        run: |
+          mkdir -p dist
+          
+          # Builds nativos do Slidev (os erros de ícones serão silenciados pelo vite.config.ts)
+          npx slidev build lec01.md --base /deep-learning-course/lec01/ --out dist/lec01
+          npx slidev build lec02.md --base /deep-learning-course/lec02/ --out dist/lec02
+          npx slidev build lec03.md --base /deep-learning-course/lec03/ --out dist/lec03
+          
+          # Cria a página de índice na raiz do domínio
+          echo "<h1>Aulas de Deep Learning</h1><ul><li><a href='lec01/'>Aula 1</a></li><li><a href='lec02/'>Aula 2</a></li><li><a href='lec03/'>Aula 3</a></li></ul>" > dist/index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
