@@ -35,13 +35,17 @@ jobs:
       - name: Build All Slides
         env:
           NODE_ENV: production
-          VITE_CATCH_ICON_ERRORS: 'true'   # <-- O lugar correto é exatamente aqui!
+          VITE_CATCH_ICON_ERRORS: 'true'
         run: |
-          npx slidev build lec01.md --base /deep-learning-course/lec01/ --out dist/lec01 --no-verify || echo "Ignorando avisos lec01"
-          npx slidev build lec02.md --base /deep-learning-course/lec02/ --out dist/lec02 --no-verify || echo "Ignorando avisos lec02"
-          npx slidev build lec03.md --base /deep-learning-course/lec03/ --out dist/lec03 --no-verify || echo "Ignorando avisos lec03"
+          # Cria a estrutura de pastas manualmente antes do build para evitar falhas de diretório
+          mkdir -p dist/lec01 dist/lec02 dist/lec03
 
-          # Garante a criação do índice mesmo se houver avisos nos sub-slides
+          # Compila usando a flag oficial do Vite para silenciar os logs de erro de ícones quebrados
+          npx slidev build lec01.md --base /deep-learning-course/lec01/ --out dist/lec01 --logLevel silent
+          npx slidev build lec02.md --base /deep-learning-course/lec02/ --out dist/lec02 --logLevel silent
+          npx slidev build lec03.md --base /deep-learning-course/lec03/ --out dist/lec03 --logLevel silent
+          
+          # Cria a página de índice na raiz da pasta dist que já foi garantida pelo mkdir
           echo "<h1>Aulas de Deep Learning</h1><ul><li><a href='lec01/'>Aula 1</a></li><li><a href='lec02/'>Aula 2</a></li><li><a href='lec03/'>Aula 3</a></li></ul>" > dist/index.html
 
       - name: Setup Pages
