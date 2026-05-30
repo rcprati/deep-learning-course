@@ -42,18 +42,21 @@ jobs:
         run: |
           mkdir -p dist
           
-          # 1. Converte o arquivo info.md para HTML se ele existir
+          # 1. Converte o arquivo README.md para HTML se ele existir
           EXTRA_INFO=""
-          if [ -f "info.md" ]; then
-            # Usa o interpretador python nativo para converter a sintaxe md básica para tags HTML
+          if [ -f "README.md" ]; then
             EXTRA_INFO=$(python3 -c '
           import sys
           html = []
-          with open("info.md", "r", encoding="utf-8") as f:
+          with open("README.md", "r", encoding="utf-8") as f:
               for line in f:
                   line = line.strip()
-                  if line.startswith("## "):
+                  if line.startswith("# "):
+                      html.append(f"<h2>{line[2:]}</h2>")
+                  elif line.startswith("## "):
                       html.append(f"<h3>{line[3:]}</h3>")
+                  elif line.startswith("### "):
+                      html.append(f"<h4>{line[4:]}</h4>")
                   elif line.startswith("* "):
                       html.append(f"<li>{line[2:]}</li>")
                   elif line.strip() == "":
@@ -64,7 +67,7 @@ jobs:
           ')
           fi
 
-          # 2. Início do arquivo de índice HTML com uma estilização elegante e o script de analytics
+          # 2. Início do arquivo de índice HTML com uma estilização elegante
           cat << EOF > dist/index.html
           <!DOCTYPE html>
           <html lang="pt-BR">
@@ -73,9 +76,11 @@ jobs:
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>Curso de Deep Learning - Material Didático</title>
               <style>
-                  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+                  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
                   h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
-                  h3 { color: #1e293b; margin-top: 30px; border-left: 4px solid #2563eb; padding-left: 10px; }
+                  h2 { color: #1e293b; margin-top: 10px; font-size: 1.5em; }
+                  h3 { color: #334155; font-size: 1.2em; margin-top: 15px; }
+                  h4 { color: #475569; font-size: 1.1em; margin-top: 15px; font-weight: bold; }
                   ul { list-style: none; padding: 0; }
                   .lessons-list li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
                   .lesson-title { font-weight: 600; font-size: 1.1em; color: #2563eb; text-decoration: none; }
@@ -83,20 +88,17 @@ jobs:
                   .btn-pdf { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; }
                   .btn-pdf:hover { background-color: #dc2626; }
                   .actions { display: flex; gap: 10px; align-items: center; }
-                  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px; margin-bottom: 30px; }
+                  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
                   .footer { margin-top: 50px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
               </style>
-              
-              <script data-goatcounter="https://deep-learning-course.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
           </head>
           <body>
-              <h1>Aulas de Deep Learning</h1>
               
-              # Injeta o conteúdo dinâmico do info.md caso exista
-              if [ ! -z "$EXTRA_INFO" ]; then
-                 echo "<div class='info-box'>$EXTRA_INFO</div>" >> dist/index.html
-              fi
+              <div class='info-box'>
+              $EXTRA_INFO
+              </div>
 
+              <h1>Aulas Disponíveis</h1>
               <p>Selecione uma aula abaixo para visualizar os slides interativos ou baixar a versão em PDF:</p>
               <ul class="lessons-list">
           EOF
@@ -127,13 +129,13 @@ jobs:
               echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
           done
 
-          # Fecha as tags do arquivo de índice HTML e adiciona um contador visual discreto no rodapé
+          # Fecha as tags do arquivo de índice HTML e adiciona um contador universal baseado no repositório
           cat << 'EOF' >> dist/index.html
               </ul>
               
               <div class="footer">
                   <p>Material atualizado automaticamente via GitHub Actions.</p>
-                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fdeep-learning-course&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visitas&edge_flat=false"/>
+                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fufabc-deep-learning-course.github.io&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visualizacoes&edge_flat=false"/>
               </div>
           </body>
           </html>
