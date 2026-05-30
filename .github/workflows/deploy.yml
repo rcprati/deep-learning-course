@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p dist
           
-          # 1. Converte o arquivo README.md para HTML se ele existir
+          # 1. Converte o README.md tratando títulos, listas e o negrito (**) de forma robusta
           EXTRA_INFO=""
           if [ -f "README.md" ]; then
             EXTRA_INFO=$(python3 -c '
@@ -51,6 +51,14 @@ jobs:
           with open("README.md", "r", encoding="utf-8") as f:
               for line in f:
                   line = line.strip()
+                  if not line:
+                      continue
+                  
+                  # Trata negrito de forma simples substituindo ** por <strong>
+                  while "**" in line:
+                      line = line.replace("**", "<strong>", 1).replace("**", "</strong>", 1)
+                  
+                  # Trata a estrutura das tags
                   if line.startswith("# "):
                       html.append(f"<h2>{line[2:]}</h2>")
                   elif line.startswith("## "):
@@ -59,8 +67,6 @@ jobs:
                       html.append(f"<h4>{line[4:]}</h4>")
                   elif line.startswith("* "):
                       html.append(f"<li>{line[2:]}</li>")
-                  elif line.strip() == "":
-                      continue
                   else:
                       html.append(f"<p>{line}</p>")
           print("\n".join(html))
@@ -77,19 +83,22 @@ jobs:
               <title>Curso de Deep Learning - Material Didático</title>
               <style>
                   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-                  h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
-                  h2 { color: #1e293b; margin-top: 10px; font-size: 1.5em; }
-                  h3 { color: #334155; font-size: 1.2em; margin-top: 15px; }
+                  h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
+                  h2 { color: #1e293b; font-size: 1.5em; margin-top: 10px; margin-bottom: 10px; }
+                  h3 { color: #334155; font-size: 1.25em; margin-top: 20px; margin-bottom: 5px; }
                   h4 { color: #475569; font-size: 1.1em; margin-top: 15px; font-weight: bold; }
-                  ul { list-style: none; padding: 0; }
+                  p { margin: 8px 0; }
+                  ul { padding-left: 20px; margin: 10px 0; }
+                  li { margin-bottom: 5px; }
+                  .lessons-list { list-style: none; padding: 0; }
                   .lessons-list li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
                   .lesson-title { font-weight: 600; font-size: 1.1em; color: #2563eb; text-decoration: none; }
                   .lesson-title:hover { text-decoration: underline; }
                   .btn-pdf { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; }
                   .btn-pdf:hover { background-color: #dc2626; }
                   .actions { display: flex; gap: 10px; align-items: center; }
-                  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-                  .footer { margin-top: 50px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 25px; border-radius: 8px; margin-bottom: 40px; }
+                  .footer { margin-top: 50px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
               </style>
           </head>
           <body>
@@ -129,13 +138,14 @@ jobs:
               echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
           done
 
-          # Fecha as tags do arquivo de índice HTML e adiciona um contador universal baseado no repositório
+          # Fecha as tags e usa o motor alternativo de badge livre de cache complexo para o contador
           cat << 'EOF' >> dist/index.html
               </ul>
               
               <div class="footer">
-                  <p>Material atualizado automaticamente via GitHub Actions.</p>
-                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fufabc-deep-learning-course.github.io&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visualizacoes&edge_flat=false"/>
+                  <span>Material atualizado automaticamente via GitHub Actions.</span>
+                  <img src="https://tinyurl.com/ccm109-counter" style="display:none;" onerror="this.src='https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-deep-learning&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Acessos&edge_flat=false'; this.onerror=null;" />
+                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-deep-learning&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Acessos&edge_flat=false" alt="Contador de Acessos" />
               </div>
           </body>
           </html>
