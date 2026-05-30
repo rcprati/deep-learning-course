@@ -42,8 +42,30 @@ jobs:
         run: |
           mkdir -p dist
           
-          # Início do arquivo de índice HTML com uma estilização elegante
-          cat << 'EOF' > dist/index.html
+          # 1. Converte o arquivo info.md para HTML se ele existir
+          EXTRA_INFO=""
+          if [ -f "info.md" ]; then
+            # Usa o interpretador python nativo para converter a sintaxe md básica para tags HTML
+            EXTRA_INFO=$(python3 -c '
+          import sys
+          html = []
+          with open("info.md", "r", encoding="utf-8") as f:
+              for line in f:
+                  line = line.strip()
+                  if line.startswith("## "):
+                      html.append(f"<h3>{line[3:]}</h3>")
+                  elif line.startswith("* "):
+                      html.append(f"<li>{line[2:]}</li>")
+                  elif line.strip() == "":
+                      continue
+                  else:
+                      html.append(f"<p>{line}</p>")
+          print("\n".join(html))
+          ')
+          fi
+
+          # 2. Início do arquivo de índice HTML com uma estilização elegante e o script de analytics
+          cat << EOF > dist/index.html
           <!DOCTYPE html>
           <html lang="pt-BR">
           <head>
@@ -52,20 +74,31 @@ jobs:
               <title>Curso de Deep Learning - Material Didático</title>
               <style>
                   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; }
-                  h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+                  h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
+                  h3 { color: #1e293b; margin-top: 30px; border-left: 4px solid #2563eb; padding-left: 10px; }
                   ul { list-style: none; padding: 0; }
-                  li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+                  .lessons-list li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
                   .lesson-title { font-weight: 600; font-size: 1.1em; color: #2563eb; text-decoration: none; }
                   .lesson-title:hover { text-decoration: underline; }
                   .btn-pdf { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; }
                   .btn-pdf:hover { background-color: #dc2626; }
                   .actions { display: flex; gap: 10px; align-items: center; }
+                  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px; margin-bottom: 30px; }
+                  .footer { margin-top: 50px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
               </style>
+              
+              <script data-goatcounter="https://deep-learning-course.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
           </head>
           <body>
               <h1>Aulas de Deep Learning</h1>
+              
+              # Injeta o conteúdo dinâmico do info.md caso exista
+              if [ ! -z "$EXTRA_INFO" ]; then
+                 echo "<div class='info-box'>$EXTRA_INFO</div>" >> dist/index.html
+              fi
+
               <p>Selecione uma aula abaixo para visualizar os slides interativos ou baixar a versão em PDF:</p>
-              <ul>
+              <ul class="lessons-list">
           EOF
 
           # Loop dinâmico que detecta as aulas presentes no repositório
@@ -75,20 +108,18 @@ jobs:
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
               
-              # 1. Build da versão Web interativa (gerando os arquivos estáticos)
+              # 1. Build da versão Web interativa
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Sobe o servidor estático local temporário em segundo plano
+              # 2. Sobe o servidor estático local temporário
               npx serve dist/"$basename" -l 8080 &
               SERVER_PID=$!
               
-              # Aguarda 3 segundos para garantir a inicialização do servidor
               sleep 3
               
-              # 3. Exporta o PDF passando a URL diretamente como o alvo do Slidev (sintaxe correta)
+              # 3. Exporta o PDF passando a URL diretamente
               npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
               
-              # Derruba o servidor temporário
               kill $SERVER_PID
               
               # 4. Adiciona a linha no arquivo de índice HTML
@@ -96,9 +127,14 @@ jobs:
               echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
           done
 
-          # Fecha as tags do arquivo de índice HTML
+          # Fecha as tags do arquivo de índice HTML e adiciona um contador visual discreto no rodapé
           cat << 'EOF' >> dist/index.html
               </ul>
+              
+              <div class="footer">
+                  <p>Material atualizado automaticamente via GitHub Actions.</p>
+                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fdeep-learning-course&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visitas&edge_flat=false"/>
+              </div>
           </body>
           </html>
           EOF
