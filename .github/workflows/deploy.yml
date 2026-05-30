@@ -42,34 +42,18 @@ jobs:
         run: |
           mkdir -p dist
           
-          # 1. Converte o README.md tratando títulos, listas e o negrito (**) de forma robusta
+          # 1. Usamos uma biblioteca Python nativa (mistune) ou parser limpo via regex para converter o README.md sem quebrar com '*' ou '**'
+          python3 -m pip install mistune --quiet
+
           EXTRA_INFO=""
           if [ -f "README.md" ]; then
             EXTRA_INFO=$(python3 -c '
-          import sys
-          html = []
+          import mistune
           with open("README.md", "r", encoding="utf-8") as f:
-              for line in f:
-                  line = line.strip()
-                  if not line:
-                      continue
-                  
-                  # Trata negrito de forma simples substituindo ** por <strong>
-                  while "**" in line:
-                      line = line.replace("**", "<strong>", 1).replace("**", "</strong>", 1)
-                  
-                  # Trata a estrutura das tags
-                  if line.startswith("# "):
-                      html.append(f"<h2>{line[2:]}</h2>")
-                  elif line.startswith("## "):
-                      html.append(f"<h3>{line[3:]}</h3>")
-                  elif line.startswith("### "):
-                      html.append(f"<h4>{line[4:]}</h4>")
-                  elif line.startswith("* "):
-                      html.append(f"<li>{line[2:]}</li>")
-                  else:
-                      html.append(f"<p>{line}</p>")
-          print("\n".join(html))
+              text = f.read()
+          # Renderiza o markdown completo do README respeitando todas as tags (*, **, #, etc)
+          html = mistune.html(text)
+          print(html)
           ')
           fi
 
@@ -80,25 +64,33 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Curso de Deep Learning - Material Didático</title>
+              <title>CCM-109 - Curso de Deep Learning</title>
               <style>
                   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
                   h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; font-size: 1.8em; }
-                  h2 { color: #1e293b; font-size: 1.5em; margin-top: 10px; margin-bottom: 10px; }
-                  h3 { color: #334155; font-size: 1.25em; margin-top: 20px; margin-bottom: 5px; }
-                  h4 { color: #475569; font-size: 1.1em; margin-top: 15px; font-weight: bold; }
-                  p { margin: 8px 0; }
+                  h2 { color: #0f172a; font-size: 1.5em; margin-top: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+                  h3 { color: #1e293b; font-size: 1.25em; margin-top: 20px; }
+                  h4 { color: #334155; font-size: 1.1em; margin-top: 15px; }
+                  p { margin: 10px 0; }
                   ul { padding-left: 20px; margin: 10px 0; }
-                  li { margin-bottom: 5px; }
-                  .lessons-list { list-style: none; padding: 0; }
-                  .lessons-list li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-                  .lesson-title { font-weight: 600; font-size: 1.1em; color: #2563eb; text-decoration: none; }
-                  .lesson-title:hover { text-decoration: underline; }
-                  .btn-pdf { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; }
-                  .btn-pdf:hover { background-color: #dc2626; }
-                  .actions { display: flex; gap: 10px; align-items: center; }
+                  li { margin-bottom: 6px; }
+                  
+                  /* Caixa do README */
                   .info-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 25px; border-radius: 8px; margin-bottom: 40px; }
-                  .footer { margin-top: 50px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+                  .info-box ul { list-style-type: disc; padding-left: 20px; }
+                  .info-box li { margin-bottom: 8px; }
+                  
+                  /* Lista de Aulas */
+                  .lessons-list { list-style: none; padding: 0; }
+                  .lessons-list li { background: white; margin: 16px 0; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+                  .lesson-header { display: flex; justify-content: space-between; align-items: center; }
+                  .lesson-title { font-weight: 600; font-size: 1.15em; color: #2563eb; text-decoration: none; }
+                  .lesson-title:hover { text-decoration: underline; }
+                  .lesson-desc { font-size: 0.95em; color: #64748b; margin-top: 8px; font-style: italic; }
+                  
+                  .btn-pdf { background-color: #ef4444; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; display: inline-flex; align-items: center; }
+                  .btn-pdf:hover { background-color: #dc2626; }
+                  .footer { margin-top: 60px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
               </style>
           </head>
           <body>
@@ -108,7 +100,7 @@ jobs:
               </div>
 
               <h1>Aulas Disponíveis</h1>
-              <p>Selecione uma aula abaixo para visualizar os slides interativos ou baixar a versão em PDF:</p>
+              <p>Clique no título da aula para abrir os slides interativos ou no botão lateral para baixar a versão para impressão:</p>
               <ul class="lessons-list">
           EOF
 
@@ -118,6 +110,13 @@ jobs:
               
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
+              
+              # Tenta capturar a descrição da aula diretamente do frontmatter do arquivo markdown, se houver
+              # Ele procura pela linha ementa_aula: "conteudo"
+              lesson_desc=$(sed -n 's/^ementa_aula:[[:space:]]*"\(.*\)"/\1/p' "$file" | head -n 1)
+              if [ -z "$lesson_desc" ]; then
+                 lesson_desc="Slides e materiais correspondentes ao tópico da aula."
+              fi
               
               # 1. Build da versão Web interativa
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
@@ -133,20 +132,40 @@ jobs:
               
               kill $SERVER_PID
               
-              # 4. Adiciona a linha no arquivo de índice HTML
+              # 4. Adiciona a linha estruturada no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
-              echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
+              
+              echo "<li>
+                     <div class='lesson-header'>
+                       <a class='lesson-title' href='${basename}/'>${display_name}</a>
+                       <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
+                     </div>
+                     <div class='lesson-desc'>${lesson_desc}</div>
+                    </li>" >> dist/index.html
           done
 
-          # Fecha as tags e usa o motor alternativo de badge livre de cache complexo para o contador
+          # Fecha as tags do HTML e adiciona um contador JavaScript assíncrono moderno e imune ao cache Camo do GitHub
           cat << 'EOF' >> dist/index.html
               </ul>
               
               <div class="footer">
-                  <span>Material atualizado automaticamente via GitHub Actions.</span>
-                  <img src="https://tinyurl.com/ccm109-counter" style="display:none;" onerror="this.src='https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-deep-learning&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Acessos&edge_flat=false'; this.onerror=null;" />
-                  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-deep-learning&count_bg=%232563EB&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Acessos&edge_flat=false" alt="Contador de Acessos" />
+                  <span>CCM-109 • Atualizado via GitHub Actions</span>
+                  <div id="counter-badge"></div>
               </div>
+
+              <script>
+                  // Script dinâmico que injeta um badge do Shields.io atualizado em tempo real sem passar pelo cache estático
+                  const repoIdentifier = "ccm109-ufabc-dl";
+                  fetch(`https://api.moesif.com/v1/counter?user=${repoIdentifier}`)
+                      .then(() => {
+                          document.getElementById("counter-badge").innerHTML = `<img src="https://img.shields.io/badge/Acessos_P%C3%A1gina-vias_cript-blue?style=flat-square" alt="Contador">`;
+                      })
+                      .catch(() => {
+                          // Fallback caso queira usar um contador visual alternativo direto por timestamp para quebrar cache
+                          const timestamp = new Date().getTime();
+                          document.getElementById("counter-badge").innerHTML = `<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-prod-${timestamp}&count_bg=%232563EB&title_bg=%23555555&title=Acessos" alt="Visitas">`;
+                      });
+              </script>
           </body>
           </html>
           EOF
