@@ -42,22 +42,22 @@ jobs:
         run: |
           mkdir -p dist
           
-          # 1. Usamos uma biblioteca Python nativa (mistune) ou parser limpo via regex para converter o README.md sem quebrar com '*' ou '**'
+          # 1. Instala o parser do markdown
           python3 -m pip install mistune --quiet
 
+          # 2. Converte o README.md para HTML dentro de uma div estruturada se ele existir
           EXTRA_INFO=""
           if [ -f "README.md" ]; then
-            EXTRA_INFO=$(python3 -c '
+            MARKDOWN_HTML=$(python3 -c '
           import mistune
           with open("README.md", "r", encoding="utf-8") as f:
               text = f.read()
-          # Renderiza o markdown completo do README respeitando todas as tags (*, **, #, etc)
-          html = mistune.html(text)
-          print(html)
+          print(mistune.html(text))
           ')
+            EXTRA_INFO="<div class='info-box'>${MARKDOWN_HTML}</div>"
           fi
 
-          # 2. Início do arquivo de índice HTML com uma estilização elegante
+          # 3. Início do arquivo de índice HTML (Injetando a variável de forma linear e segura)
           cat << EOF > dist/index.html
           <!DOCTYPE html>
           <html lang="pt-BR">
@@ -95,9 +95,7 @@ jobs:
           </head>
           <body>
               
-              <div class='info-box'>
               $EXTRA_INFO
-              </div>
 
               <h1>Aulas Disponíveis</h1>
               <p>Clique no título da aula para abrir os slides interativos ou no botão lateral para baixar a versão para impressão:</p>
@@ -111,28 +109,23 @@ jobs:
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
               
-              # Tenta capturar a descrição da aula diretamente do frontmatter do arquivo markdown, se houver
-              # Ele procura pela linha ementa_aula: "conteudo"
+              # Tenta capturar a ementa do frontmatter do arquivo markdown
               lesson_desc=$(sed -n 's/^ementa_aula:[[:space:]]*"\(.*\)"/\1/p' "$file" | head -n 1)
               if [ -z "$lesson_desc" ]; then
                  lesson_desc="Slides e materiais correspondentes ao tópico da aula."
               fi
               
-              # 1. Build da versão Web interativa
+              # Build e Server local temporário
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
-              
-              # 2. Sobe o servidor estático local temporário
               npx serve dist/"$basename" -l 8080 &
               SERVER_PID=$!
               
               sleep 3
               
-              # 3. Exporta o PDF passando a URL diretamente
+              # Exporta o PDF nativo
               npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
-              
               kill $SERVER_PID
               
-              # 4. Adiciona a linha estruturada no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
               
               echo "<li>
@@ -144,7 +137,7 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-	  # Fecha as tags do HTML e adiciona o contador injetado via JavaScript com timestamp dinâmico real
+          # Fecha as tags do HTML e adiciona o contador corrigido injetado via JS
           cat << 'EOF' >> dist/index.html
               </ul>
               
@@ -154,18 +147,14 @@ jobs:
               </div>
 
               <script>
-                  // Gera um timestamp para quebrar o cache do proxy do GitHub (Camo)
                   const token = new Date().getTime();
-                  // Seu identificador exclusivo no HITS
                   const urlAlvo = "https://rcprati.github.io/deep-learning-course/";
                   
-                  // Injeta a imagem apontando para o HITS usando o formato oficial de badge do Shields.io que ele suporta nativamente
                   document.getElementById("counter-badge").innerHTML = `<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(urlAlvo)}&count_bg=%232563EB&title_bg=%23555555&title=Acessos&nocache=${token}" alt="Contador de Acessos" />`;
               </script>
           </body>
           </html>
           EOF
-
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
