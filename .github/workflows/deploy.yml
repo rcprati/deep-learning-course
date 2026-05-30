@@ -75,25 +75,23 @@ jobs:
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
               
-              # 1. Build da versão Web interativa (gera a pasta dist/lecXX)
+              # 1. Build da versão Web interativa (gerando os arquivos estáticos)
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Sobe um servidor estático local temporário em segundo plano apontando para o build da aula
-              # Usamos uma porta diferente para cada iteração para evitar colisões
+              # 2. Sobe o servidor estático local temporário em segundo plano
               npx serve dist/"$basename" -l 8080 &
               SERVER_PID=$!
               
-              # Aguarda 3 segundos para garantir que o servidor local está pronto e respondendo
+              # Aguarda 3 segundos para garantir a inicialização do servidor
               sleep 3
               
-              # 3. Executa o export apontando para a URL local ativa. 
-              # Isso faz o Playwright carregar os elementos instantaneamente sem passar pelo ciclo de renderização dev do Slidev.
-              npx slidev export "$file" --url http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
+              # 3. Exporta o PDF passando a URL diretamente como o alvo do Slidev (sintaxe correta)
+              npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
               
-              # Derruba o servidor temporário desta aula antes de ir para a próxima
+              # Derruba o servidor temporário
               kill $SERVER_PID
               
-              # 4. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
+              # 4. Adiciona a linha no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
               echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
           done
