@@ -39,8 +39,6 @@ jobs:
         env:
           NODE_ENV: production
           CI: 'true'
-          # Esta é a variável oficial que o Playwright lê para desativar o Sandbox no Linux CI:
-          PLAYWRIGHT_CHROMIUM_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-gpu --headless'
         run: |
           mkdir -p dist
           
@@ -77,13 +75,25 @@ jobs:
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
               
-              # 1. Build da versão Web interativa
+              # 1. Build da versão Web interativa (gera a pasta dist/lecXX)
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Export do arquivo para formato PDF (o Playwright aplicará os argumentos de env automaticamente)
-              npx slidev export "$file" --output dist/"$basename"/"$basename".pdf
+              # 2. Sobe um servidor estático local temporário em segundo plano apontando para o build da aula
+              # Usamos uma porta diferente para cada iteração para evitar colisões
+              npx serve dist/"$basename" -l 8080 &
+              SERVER_PID=$!
               
-              # 3. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
+              # Aguarda 3 segundos para garantir que o servidor local está pronto e respondendo
+              sleep 3
+              
+              # 3. Executa o export apontando para a URL local ativa. 
+              # Isso faz o Playwright carregar os elementos instantaneamente sem passar pelo ciclo de renderização dev do Slidev.
+              npx slidev export "$file" --url http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
+              
+              # Derruba o servidor temporário desta aula antes de ir para a próxima
+              kill $SERVER_PID
+              
+              # 4. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
               echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
           done
