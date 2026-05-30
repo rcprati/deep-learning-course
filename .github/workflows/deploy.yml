@@ -144,7 +144,7 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-          # Fecha as tags do HTML e adiciona um contador JavaScript assíncrono moderno e imune ao cache Camo do GitHub
+	  # Fecha as tags do HTML e adiciona o contador injetado via JavaScript com timestamp dinâmico real
           cat << 'EOF' >> dist/index.html
               </ul>
               
@@ -154,21 +154,18 @@ jobs:
               </div>
 
               <script>
-                  // Script dinâmico que injeta um badge do Shields.io atualizado em tempo real sem passar pelo cache estático
-                  const repoIdentifier = "ccm109-ufabc-dl";
-                  fetch(`https://api.moesif.com/v1/counter?user=${repoIdentifier}`)
-                      .then(() => {
-                          document.getElementById("counter-badge").innerHTML = `<img src="https://img.shields.io/badge/Acessos_P%C3%A1gina-vias_cript-blue?style=flat-square" alt="Contador">`;
-                      })
-                      .catch(() => {
-                          // Fallback caso queira usar um contador visual alternativo direto por timestamp para quebrar cache
-                          const timestamp = new Date().getTime();
-                          document.getElementById("counter-badge").innerHTML = `<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fccm109-ufabc-prod-${timestamp}&count_bg=%232563EB&title_bg=%23555555&title=Acessos" alt="Visitas">`;
-                      });
+                  // Gera um timestamp para quebrar o cache do proxy do GitHub (Camo)
+                  const token = new Date().getTime();
+                  // Seu identificador exclusivo no HITS
+                  const urlAlvo = "https://rcprati.github.io/deep-learning-course/";
+                  
+                  // Injeta a imagem apontando para o HITS usando o formato oficial de badge do Shields.io que ele suporta nativamente
+                  document.getElementById("counter-badge").innerHTML = `<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(urlAlvo)}&count_bg=%232563EB&title_bg=%23555555&title=Acessos&nocache=${token}" alt="Contador de Acessos" />`;
               </script>
           </body>
           </html>
           EOF
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
