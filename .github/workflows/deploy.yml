@@ -137,7 +137,6 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-	  # Fecha as tags do HTML e adiciona o contador com quebra de cache na raiz do arquivo de imagem
           cat << 'EOF' >> dist/index.html
               </ul>
               
