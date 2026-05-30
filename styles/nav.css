@@ -1,0 +1,84 @@
+/* Esconde a barra/diálogo de navegação do Slidev em todas as versões.
+   Mantém a navegação por teclado (setas, espaço) e por clique nos slides. */
+
+.slidev-goto-dialog,
+.slidev-controls,
+.slidev-nav-controls,
+.slidev-nav,
+.slidev-page-controls,
+[class*="slidev-goto"],
+[class*="slidev-nav-controls"],
+[class*="slidev-controls"],
+#slide-content + div > .slidev-icon-btn,
+.slidev-page-root > .controls,
+.slidev-layout .controls,
+nav.slidev-nav {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Caso a versão use o componente NavControls dentro de um slot fixo */
+[aria-label="Slidev Navigation"],
+[aria-label*="navigation" i],
+[aria-label*="goto" i] {
+  display: none !important;
+}
+
+/* Botões individuais do Slidev */
+.slidev-icon-btn {
+  display: none !important;
+}
+
+/* Wrapper utilitário do Slidev (Tailwind/Unocss) que segura a barra de navegação
+   fixa no canto superior direito ("fixed right-5 transition-all -top-20"). */
+.fixed.right-5.transition-all,
+.fixed.right-5.\-top-20,
+.fixed.right-5[class*="top"][class*="transition"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* O tema Seriph aplica estilos de prose que inflam o tamanho do texto dentro
+   de SVGs. Reset suave: deixa o atributo font-size do <text> mandar de volta. */
+.slidev-layout svg text {
+  font-size: revert !important;
+  line-height: 1 !important;
+  font-family: inherit;
+}
+.slidev-layout svg {
+  font-size: 14px;
+}
+
+/* Mermaid em containers de coluna estoura a largura porque Slidev aplica
+   transform: scale(...) — o SVG mantém seu tamanho natural no fluxo, só
+   muda visualmente. Forçamos o SVG a respeitar a largura do container. */
+.slidev-layout .slidev-mermaid,
+.slidev-layout div[class*="mermaid"] {
+  max-width: 100% !important;
+  overflow: visible !important;
+  display: flex;
+  justify-content: center;
+}
+
+.slidev-layout .slidev-mermaid > svg,
+.slidev-layout div[class*="mermaid"] > svg {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  /* Slidev aplica transform: scale() para o {scale: ...} — substituímos
+     pelo dimensionamento via largura, que respeita o flow */
+  transform: none !important;
+}
+
+/* Filhos de grid/two-cols não devem empurrar o container.
+   NÃO usar overflow: hidden aqui pois corta diagramas. */
+.slidev-layout .grid > div,
+.slidev-layout .two-cols > div,
+.slidev-layout .col-left,
+.slidev-layout .col-right {
+  min-width: 0;
+}
