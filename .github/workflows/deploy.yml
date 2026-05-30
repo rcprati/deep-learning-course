@@ -29,22 +29,71 @@ jobs:
           node-version: lts/*
           cache: npm
 
+      - name: Install Playwright Chromium (Necessário para exportar PDF)
+        run: npx playwright install chromium --with-deps
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Build All Slides
+      - name: Build and Export Slides Dinamicamente
         env:
           NODE_ENV: production
         run: |
           mkdir -p dist
           
-          # Builds nativos do Slidev (os erros de ícones serão silenciados pelo vite.config.ts)
-          npx slidev build lec01.md --base /deep-learning-course/lec01/ --out dist/lec01
-          npx slidev build lec02.md --base /deep-learning-course/lec02/ --out dist/lec02
-          npx slidev build lec03.md --base /deep-learning-course/lec03/ --out dist/lec03
-          
-          # Cria a página de índice na raiz do domínio
-          echo "<h1>Aulas de Deep Learning</h1><ul><li><a href='lec01/'>Aula 1</a></li><li><a href='lec02/'>Aula 2</a></li><li><a href='lec03/'>Aula 3</a></li></ul>" > dist/index.html
+          # Início do arquivo de índice HTML com uma estilização elegante
+          cat << 'EOF' > dist/index.html
+          <!DOCTYPE html>
+          <html lang="pt-BR">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Curso de Deep Learning - Material Didático</title>
+              <style>
+                  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+                  h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+                  ul { list-style: none; padding: 0; }
+                  li { background: white; margin: 12px 0; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+                  .lesson-title { font-weight: 600; font-size: 1.1em; color: #2563eb; text-decoration: none; }
+                  .lesson-title:hover { text-decoration: underline; }
+                  .btn-pdf { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; }
+                  .btn-pdf:hover { background-color: #dc2626; }
+                  .actions { display: flex; gap: 10px; align-items: center; }
+              </style>
+          </head>
+          <body>
+              <h1>Aulas de Deep Learning</h1>
+              <p>Selecione uma aula abaixo para visualizar os slides interativos ou baixar a versão em PDF:</p>
+              <ul>
+          EOF
+
+          # Loop dinâmico que detecta APENAS as aulas presentes no repositório
+          for file in lec*.md; do
+              # Ignora se o padrão não encontrar arquivos reais
+              [ -e "$file" ] || continue
+              
+              # Extrai o nome base (ex: lec01)
+              basename="${file%.md}"
+              echo "Processando e compilando: $basename"
+              
+              # 1. Build da versão Web interativa
+              npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
+              
+              # 2. Export do arquivo para formato PDF
+              npx slidev export "$file" --output dist/"$basename"/"$basename".pdf
+              
+              # 3. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
+              # Capitaliza o nome para exibição (ex: lec01 -> Aula lec01)
+              display_name=$(echo "$basename" | sed 's/lec/Aula /')
+              echo "<li><a class='lesson-title' href='${basename}/'>${display_name}</a><div class='actions'><a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 Baixar PDF</a></div></li>" >> dist/index.html
+          done
+
+          # Fecha as tags do arquivo de índice HTML
+          cat << 'EOF' >> dist/index.html
+              </ul>
+          </body>
+          </html>
+          EOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
