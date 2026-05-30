@@ -137,28 +137,24 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-          cat << 'EOF' >> dist/index.html
+          # Captura um hash único do commit atual para usar como quebra de cache estática
+          BUILD_HASH=$(git rev-parse --short HEAD)
+          URL_ALVO="https://rcprati.github.io/deep-learning-course/"
+
+          # Fecha as tags do HTML e adiciona o contador estático puro com quebra de cache por Build
+          cat << EOF >> dist/index.html
               </ul>
               
               <div class="footer">
                   <span>CCM-109 • Atualizado via GitHub Actions</span>
-                  <div id="counter-badge"></div>
+                  <div>
+                      <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${URL_ALVO}&count_bg=%232563EB&title_bg=%23555555&title=Acessos&v=${BUILD_HASH}" alt="Contador de Acessos" />
+                  </div>
               </div>
-
-              <script>
-                  // Pegamos o milissegundo atual
-                  const token = new Date().getTime();
-                  // A URL do seu curso estruturada de forma limpa para o HITS reconhecer o ID estável
-                  const urlOriginal = "https://rcprati.github.io/deep-learning-course/";
-                  
-                  # O segredo: passamos o nocache no final do SVG para driblar o GitHub Camo, mantendo a url do site intacta por dentro
-                  const srcContador = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=" + encodeURIComponent(urlOriginal) + "&count_bg=%232563EB&title_bg=%23555555&title=Acessos&github_cache_bypass=" + token;
-                  
-                  document.getElementById("counter-badge").innerHTML = '<img src="' + srcContador + '" alt="Contador de Acessos" />';
-              </script>
           </body>
           </html>
           EOF
+
 
 
       - name: Setup Pages
