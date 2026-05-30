@@ -39,8 +39,8 @@ jobs:
         env:
           NODE_ENV: production
           CI: 'true'
-          # Flags cruciais para o Chromium rodar de forma estável dentro do contêiner Docker/Linux do GitHub Actions:
-          FLAGS: --no-sandbox --disable-setuid-sandbox --disable-gpu --headless
+          # Esta é a variável oficial que o Playwright lê para desativar o Sandbox no Linux CI:
+          PLAYWRIGHT_CHROMIUM_ARGS: '--no-sandbox --disable-setuid-sandbox --disable-gpu --headless'
         run: |
           mkdir -p dist
           
@@ -70,7 +70,7 @@ jobs:
               <ul>
           EOF
 
-          # Loop dinâmico que detecta acoplamento de aulas presentes
+          # Loop dinâmico que detecta as aulas presentes no repositório
           for file in lec*.md; do
               [ -e "$file" ] || continue
               
@@ -80,7 +80,7 @@ jobs:
               # 1. Build da versão Web interativa
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Export do arquivo para formato PDF usando os argumentos de sandbox do ambiente
+              # 2. Export do arquivo para formato PDF (o Playwright aplicará os argumentos de env automaticamente)
               npx slidev export "$file" --output dist/"$basename"/"$basename".pdf
               
               # 3. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
