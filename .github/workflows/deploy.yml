@@ -38,7 +38,7 @@ jobs:
       - name: Build and Export Slides Dinamicamente
         env:
           NODE_ENV: production
-          CI: 'true'  # Força o Playwright a rodar em modo CI estrito
+          CI: 'true'
         run: |
           mkdir -p dist
           
@@ -70,7 +70,6 @@ jobs:
 
           # Loop dinâmico que detecta APENAS as aulas presentes no repositório
           for file in lec*.md; do
-              # Ignora se o padrão não encontrar arquivos reais
               [ -e "$file" ] || continue
               
               basename="${file%.md}"
@@ -79,8 +78,9 @@ jobs:
               # 1. Build da versão Web interativa
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Export do arquivo para formato PDF com timeout estendido
-              npx slidev export "$file" --output dist/"$basename"/"$basename".pdf --timeout 60000
+              # 2. Export do arquivo para PDF usando o arquivo buildado localmente para evitar timeouts de rede
+              # Passar o diretório de build para o export força o Slidev a ler os arquivos estáticos direto, sem subir servidor web fantasma.
+              npx slidev export dist/"$basename" --output dist/"$basename"/"$basename".pdf
               
               # 3. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
