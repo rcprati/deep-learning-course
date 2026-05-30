@@ -39,6 +39,8 @@ jobs:
         env:
           NODE_ENV: production
           CI: 'true'
+          # Flags cruciais para o Chromium rodar de forma estável dentro do contêiner Docker/Linux do GitHub Actions:
+          FLAGS: --no-sandbox --disable-setuid-sandbox --disable-gpu --headless
         run: |
           mkdir -p dist
           
@@ -68,9 +70,8 @@ jobs:
               <ul>
           EOF
 
-          # Loop dinâmico que detecta APENAS as aulas presentes no repositório
+          # Loop dinâmico que detecta acoplamento de aulas presentes
           for file in lec*.md; do
-              # Ignora se o padrão não encontrar arquivos reais
               [ -e "$file" ] || continue
               
               basename="${file%.md}"
@@ -79,8 +80,8 @@ jobs:
               # 1. Build da versão Web interativa
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               
-              # 2. Export do arquivo para formato PDF apontando de volta para o .md correto, usando a flag do browser estável
-              npx slidev export "$file" --output dist/"$basename"/"$basename".pdf --browser chromium
+              # 2. Export do arquivo para formato PDF usando os argumentos de sandbox do ambiente
+              npx slidev export "$file" --output dist/"$basename"/"$basename".pdf
               
               # 3. Adiciona a linha correspondente de forma dinâmica no arquivo de índice HTML
               display_name=$(echo "$basename" | sed 's/lec/Aula /')
