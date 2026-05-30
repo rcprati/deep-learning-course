@@ -137,7 +137,7 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-          # Fecha as tags do HTML e adiciona o contador corrigido injetado via JS
+	  # Fecha as tags do HTML e adiciona o contador com quebra de cache na raiz do arquivo de imagem
           cat << 'EOF' >> dist/index.html
               </ul>
               
@@ -147,14 +147,20 @@ jobs:
               </div>
 
               <script>
+                  // Pegamos o milissegundo atual
                   const token = new Date().getTime();
-                  const urlAlvo = "https://rcprati.github.io/deep-learning-course/";
+                  // A URL do seu curso estruturada de forma limpa para o HITS reconhecer o ID estável
+                  const urlOriginal = "https://rcprati.github.io/deep-learning-course/";
                   
-                  document.getElementById("counter-badge").innerHTML = `<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(urlAlvo)}&count_bg=%232563EB&title_bg=%23555555&title=Acessos&nocache=${token}" alt="Contador de Acessos" />`;
+                  # O segredo: passamos o nocache no final do SVG para driblar o GitHub Camo, mantendo a url do site intacta por dentro
+                  const srcContador = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=" + encodeURIComponent(urlOriginal) + "&count_bg=%232563EB&title_bg=%23555555&title=Acessos&github_cache_bypass=" + token;
+                  
+                  document.getElementById("counter-badge").innerHTML = '<img src="' + srcContador + '" alt="Contador de Acessos" />';
               </script>
           </body>
           </html>
           EOF
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
