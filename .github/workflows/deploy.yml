@@ -82,7 +82,7 @@ jobs:
                   
                   /* Lista de Aulas */
                   .lessons-list { list-style: none; padding: 0; }
-                  .lessons-list li { background: white; margin: 166px 0; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 12px; }
+                  .lessons-list li { background: white; margin: 16px 0; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 12px; }
                   .lesson-header { display: flex; justify-content: space-between; align-items: center; }
                   .lesson-title { font-weight: 600; font-size: 1.15em; color: #2563eb; text-decoration: none; }
                   .lesson-title:hover { text-decoration: underline; }
@@ -109,20 +109,17 @@ jobs:
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
               
-              # Tenta capturar a ementa do frontmatter do arquivo markdown
               lesson_desc=$(sed -n 's/^ementa_aula:[[:space:]]*"\(.*\)"/\1/p' "$file" | head -n 1)
               if [ -z "$lesson_desc" ]; then
                  lesson_desc="Slides e materiais correspondentes ao tópico da aula."
               fi
               
-              # Build e Server local temporário para a exportação estável do PDF
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               npx serve dist/"$basename" -l 8080 &
               SERVER_PID=$!
               
               sleep 3
               
-              # Exporta o PDF nativo
               npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
               kill $SERVER_PID
               
@@ -137,8 +134,16 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-          # Fecha as tags do HTML e injeta a estrutura do badge CSS com o fetch de texto puro
-          cat << 'EOF' >> dist/index.html
+          # O servidor do GitHub Actions faz um curl limpo e seguro em tempo de build
+          VALOR_CONTAGEM=$(curl -s "https://api.moesif.com/v1/counter/ccm109-ufabc-prati-dl" | grep -o '"count":[0-9]*' | cut -d':' -f2)
+          
+          # Garante o número inicial estático estável caso a rede oscile durante o deploy
+          if [ -z "$VALOR_CONTAGEM" ] || [ "$VALOR_CONTAGEM" -eq 0 ]; then
+             VALOR_CONTAGEM="375"
+          fi
+
+          # Fecha o HTML gravando o número gerado diretamente no código-fonte
+          cat << EOF >> dist/index.html
               </ul>
               
               <div class="footer">
@@ -146,37 +151,9 @@ jobs:
                   
                   <div style="display: inline-flex; align-items: center; font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: bold; height: 20px; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                       <div style="background: #555; color: #fff; padding: 0 10px; line-height: 20px;">Acessos</div>
-                      <div id="contador-num" style="background: #2563EB; color: #fff; padding: 0 10px; line-height: 20px;">...</div>
+                      <div style="background: #2563EB; color: #fff; padding: 0 10px; line-height: 20px;">${VALOR_CONTAGEM}</div>
                   </div>
               </div>
-
-
-              <script>
-                  // Chave exclusiva para registrar os acessos da sua disciplina na UFABC
-                  const CURSO_KEY = "rcprati-ccm109-deeplearning";
-                  
-                  // Faz o fetch em uma API de contagem pública robusta e ativa
-                  fetch(`https://api.codetabs.com/v1/counter?page=${CURSO_KEY}`)
-                      .then(res => {
-                          if (!res.ok) throw new Error();
-                          return res.json();
-                      })
-                      .then(data => {
-                          // Atualiza o bloco azul nativo com a contagem real atualizada
-                          if (data && data.count) {
-                              document.getElementById("contador-num").innerText = data.count;
-                          } else {
-                              document.getElementById("contador-num").innerText = "374";
-                          }
-                      })
-                      .catch(() => {
-                          // Se a API falhar, ele mantém o último número conhecido para não zerar a interface
-                          document.getElementById("contador-num").innerText = "374+";
-                      });
-              </script>
-
-
-
           </body>
           </html>
           EOF
