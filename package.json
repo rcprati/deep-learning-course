@@ -8,5 +8,9 @@
   },
   "devDependencies": {
     "playwright-chromium": "^1.60.0"
+  },
+
+  "scripts": {
+    "build": "slidev build lec01.md --out dist/lec01 && slidev build lec02.md --out dist/lec02"
   }
 }

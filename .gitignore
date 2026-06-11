@@ -1,3 +1,5 @@
 node_modules/
-lec02.md
+.slidev/
+dist/
 lec03.md
+.DS_Store
