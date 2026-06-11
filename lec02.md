@@ -904,23 +904,16 @@ hist = model.fit(
 
 # Treino completo — PyTorch
 
-```python {all|1-7|9-10|12-20|all}
-import torch.nn as nn, torch.optim as optim
-
-# arquitetura
-model = nn.Sequential(
-    nn.Linear(29, 16), nn.ReLU(), nn.Dropout(0.3),
-    nn.Linear(16, 1),  nn.Sigmoid(),
-)
+```python {all|1-3|5-10|12-15|all}
+# mesma arquitetura (nn.Sequential equivalente ao slide anterior)
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters())
 
-# laço de treino (early stopping manual)
 best_val, patience, wait, best_w = float('inf'), 10, 0, None
 for epoch in range(200):
     model.train()
     optimizer.zero_grad()
-    criterion(model(X_train), y_train).backward()  # forward + backward
+    criterion(model(X_train), y_train).backward()
     optimizer.step()
     model.eval()
     with torch.no_grad():

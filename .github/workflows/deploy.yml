@@ -119,29 +119,28 @@ jobs:
               
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
-              
-              lesson_desc=$(sed -n 's/^ementa_aula:[[:space:]]*"\(.*\)"/\1/p' "$file" | head -n 1)
-              if [ -z "$lesson_desc" ]; then
-                 lesson_desc="Slides e materiais correspondentes ao tópico da aula."
+
+              display_name=$(echo "$basename" | sed 's/lec/Aula /')
+
+              lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
+              if [ -z "$lesson_title" ]; then
+                 lesson_title="$display_name"
               fi
-              
+
               npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
               npx serve dist/"$basename" -l 8080 &
               SERVER_PID=$!
-              
+
               sleep 3
-              
+
               npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
               kill $SERVER_PID
               
-              display_name=$(echo "$basename" | sed 's/lec/Aula /')
-              
               echo "<li>
                      <div class='lesson-header'>
-                       <a class='lesson-title' href='${basename}/'>${display_name}</a>
+                       <a class='lesson-title' href='${basename}/'>${lesson_title}</a>
                        <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
                      </div>
-                     <div class='lesson-desc'>${lesson_desc}</div>
                     </li>" >> dist/index.html
           done
 
