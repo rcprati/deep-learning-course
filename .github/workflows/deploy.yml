@@ -94,7 +94,8 @@ jobs:
                   /* Lista de Aulas */
                   .lessons-list { list-style: none; padding: 0; }
                   .lessons-list li { background: white; margin: 16px 0; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 12px; }
-                  .lesson-header { display: flex; justify-content: space-between; align-items: center; }
+                  .lesson-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+                  .lesson-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
                   .lesson-title { font-weight: 600; font-size: 1.15em; color: #2563eb; text-decoration: none; }
                   .lesson-title:hover { text-decoration: underline; }
                   .lesson-desc { font-size: 0.95em; color: #64748b; margin-top: 8px; font-style: italic; }
@@ -119,10 +120,18 @@ jobs:
               <ul class="lessons-list">
           EOF
 
+          # Prepara notebooks antes do loop
+          REPO="${GITHUB_REPOSITORY}"
+          COLAB_BASE="https://colab.research.google.com/github/${REPO}/blob/main/notebooks"
+          if ls notebooks/*.ipynb 2>/dev/null | grep -q .; then
+            mkdir -p dist/notebooks
+            cp notebooks/*.ipynb dist/notebooks/
+          fi
+
           # Loop dinâmico que detecta as aulas presentes no repositório
           for file in lec*.md; do
               [ -e "$file" ] || continue
-              
+
               basename="${file%.md}"
               echo "Processando e compilando: $basename"
 
@@ -141,50 +150,33 @@ jobs:
 
               npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
               kill $SERVER_PID
-              
+
+              # Botões Colab para notebooks associados a esta aula (ex: lec02-*.ipynb)
+              COLAB_BUTTONS=""
+              for nb in notebooks/${basename}-*.ipynb; do
+                [ -e "$nb" ] || continue
+                nb_file=$(basename "$nb")
+                nb_label="${nb_file%.ipynb}"          # ex: lec02-keras
+                nb_suffix="${nb_label#${basename}-}"  # ex: keras
+                colab_url="${COLAB_BASE}/${nb_file}"
+                COLAB_BUTTONS="${COLAB_BUTTONS}<a class='btn-colab' href='${colab_url}' target='_blank' title='Notebook ${nb_suffix}'><img src='https://colab.research.google.com/assets/colab-badge.svg' alt='Colab ${nb_suffix}' height='18'> ${nb_suffix}</a> "
+              done
+
               echo "<li>
                      <div class='lesson-header'>
                        <a class='lesson-title' href='${basename}/'>${lesson_title}</a>
-                       <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
+                       <div class='lesson-actions'>
+                         ${COLAB_BUTTONS}
+                         <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
+                       </div>
                      </div>
                     </li>" >> dist/index.html
           done
 
-          # Copia notebooks para dist e gera seção de notebooks
-          REPO="${GITHUB_REPOSITORY}"   # ex: rcprati/deep-learning-course
-          COLAB_BASE="https://colab.research.google.com/github/${REPO}/blob/main/notebooks"
-
-          cat << EOF >> dist/index.html
-              </ul>
-          EOF
-
-          # Seção de notebooks (se existirem)
-          if ls notebooks/*.ipynb 2>/dev/null | grep -q .; then
-            mkdir -p dist/notebooks
-            cp notebooks/*.ipynb dist/notebooks/
-
-            echo "<div class='notebooks-section'>" >> dist/index.html
-            echo "<h2>Notebooks</h2>" >> dist/index.html
-            echo "<p>Abra diretamente no Google Colab:</p>" >> dist/index.html
-            echo "<ul class='notebooks-list'>" >> dist/index.html
-
-            for nb in notebooks/*.ipynb; do
-              nb_file=$(basename "$nb")
-              nb_name="${nb_file%.ipynb}"
-              colab_url="${COLAB_BASE}/${nb_file}"
-              echo "<li>
-                <span class='nb-title'>📓 ${nb_name}</span>
-                <a class='btn-colab' href='${colab_url}' target='_blank'>
-                  <img src='https://colab.research.google.com/assets/colab-badge.svg' alt='Abrir no Colab' height='20'>
-                </a>
-              </li>" >> dist/index.html
-            done
-
-            echo "</ul></div>" >> dist/index.html
-          fi
-
           # Fecha o HTML com rodapé
           cat << EOF >> dist/index.html
+              </ul>
+
               <div class="footer">
                   <span>CCM-109 • Atualizado via GitHub Actions</span>
                   <span style="font-size: 0.9em; color: #94a3b8;">Monitoramento via GA4 ativo</span>
