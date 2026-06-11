@@ -99,8 +99,14 @@ jobs:
                   .lesson-title:hover { text-decoration: underline; }
                   .lesson-desc { font-size: 0.95em; color: #64748b; margin-top: 8px; font-style: italic; }
                   
-                  .btn-pdf { background-color: #ef4444; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; display: inline-flex; align-items: center; }
+                  .btn-pdf { background-color: #ef4444; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 500; transition: background 0.2s; display: inline-flex; align-items: center; gap: 4px; }
                   .btn-pdf:hover { background-color: #dc2626; }
+                  .btn-colab { background-color: #f59e0b; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85em; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+                  .btn-colab:hover { background-color: #d97706; }
+                  .notebooks-section { margin-top: 40px; }
+                  .notebooks-list { list-style: none; padding: 0; }
+                  .notebooks-list li { background: white; margin: 10px 0; padding: 16px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+                  .nb-title { font-weight: 500; color: #1e293b; }
                   .footer { margin-top: 60px; font-size: 0.85em; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
               </style>
           </head>
@@ -144,10 +150,41 @@ jobs:
                     </li>" >> dist/index.html
           done
 
-          # Fecha o HTML com um rodapé limpo institucional (Removido o contador que quebrava o layout)
+          # Copia notebooks para dist e gera seção de notebooks
+          REPO="${GITHUB_REPOSITORY}"   # ex: rcprati/deep-learning-course
+          COLAB_BASE="https://colab.research.google.com/github/${REPO}/blob/main/notebooks"
+
           cat << EOF >> dist/index.html
               </ul>
-              
+          EOF
+
+          # Seção de notebooks (se existirem)
+          if ls notebooks/*.ipynb 2>/dev/null | grep -q .; then
+            mkdir -p dist/notebooks
+            cp notebooks/*.ipynb dist/notebooks/
+
+            echo "<div class='notebooks-section'>" >> dist/index.html
+            echo "<h2>Notebooks</h2>" >> dist/index.html
+            echo "<p>Abra diretamente no Google Colab:</p>" >> dist/index.html
+            echo "<ul class='notebooks-list'>" >> dist/index.html
+
+            for nb in notebooks/*.ipynb; do
+              nb_file=$(basename "$nb")
+              nb_name="${nb_file%.ipynb}"
+              colab_url="${COLAB_BASE}/${nb_file}"
+              echo "<li>
+                <span class='nb-title'>📓 ${nb_name}</span>
+                <a class='btn-colab' href='${colab_url}' target='_blank'>
+                  <img src='https://colab.research.google.com/assets/colab-badge.svg' alt='Abrir no Colab' height='20'>
+                </a>
+              </li>" >> dist/index.html
+            done
+
+            echo "</ul></div>" >> dist/index.html
+          fi
+
+          # Fecha o HTML com rodapé
+          cat << EOF >> dist/index.html
               <div class="footer">
                   <span>CCM-109 • Atualizado via GitHub Actions</span>
                   <span style="font-size: 0.9em; color: #94a3b8;">Monitoramento via GA4 ativo</span>
