@@ -135,8 +135,20 @@ jobs:
             lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
             if [ -z "$lesson_title" ]; then lesson_title="$basename"; fi
 
+            # Build para GitHub Pages (base path com nome do repositório)
             npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
-            npx slidev export "$file" --output dist/"$basename"/"$basename".pdf --with-clicks false
+
+            # Build separado com base / para export de PDF via servidor local
+            # (evita problema do Playwright com dev server interno em CI)
+            npx slidev build "$file" --base / --out /tmp/pdf-"$basename"
+            python3 -m http.server 8080 --directory /tmp/pdf-"$basename" &
+            SERVE_PID=$!
+            sleep 4
+            npx slidev export http://localhost:8080/ \
+              --output dist/"$basename"/"$basename".pdf \
+              --with-clicks false
+            kill "$SERVE_PID" 2>/dev/null || true
+            rm -rf /tmp/pdf-"$basename"
 
             # Botões Colab para notebooks associados (ex: lec02-*.ipynb)
             COLAB_BUTTONS=""
