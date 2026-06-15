@@ -36,6 +36,14 @@ echo "→ Buildando lec01 ..."
 node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec01.md --out dist/lec01 --base /lec01/
 echo "→ Buildando lec02 ..."
 node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec02.md --out dist/lec02 --base /lec02/
+echo "→ Buildando lec03 ..."
+node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec03.md --out dist/lec03 --base /lec03/
+echo "→ Buildando lec01-en ..."
+node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec01-en.md --out dist/lec01-en --base /lec01-en/
+echo "→ Buildando lec02-en ..."
+node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec02-en.md --out dist/lec02-en --base /lec02-en/
+echo "→ Buildando lec03-en ..."
+node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec03-en.md --out dist/lec03-en --base /lec03-en/
 
 # ── 5. Copiar dist de volta ───────────────────────────────────────────────────
 echo "→ Copiando dist para $SRC/dist ..."

@@ -115,9 +115,7 @@ jobs:
               
               $EXTRA_INFO
 
-              <h1>Aulas Disponíveis</h1>
-              <p>Clique no título da aula para abrir os slides interativos ou no botão lateral para baixar a versão para impressão:</p>
-              <ul class="lessons-list">
+              <h1>CCM-109 — Deep Learning</h1>
           EOF
 
           # Prepara notebooks antes do loop
@@ -128,50 +126,52 @@ jobs:
             cp notebooks/*.ipynb dist/notebooks/
           fi
 
-          # Loop dinâmico que detecta as aulas presentes no repositório
-          for file in lec*.md; do
-              [ -e "$file" ] || continue
+          # Função auxiliar para emitir um card de aula
+          emit_card() {
+            local file="$1"
+            local basename="${file%.md}"
+            echo "Processando e compilando: $basename"
 
-              basename="${file%.md}"
-              echo "Processando e compilando: $basename"
+            lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
+            if [ -z "$lesson_title" ]; then lesson_title="$basename"; fi
 
-              display_name=$(echo "$basename" | sed 's/lec/Aula /')
+            npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
+            npx slidev export "$file" --output dist/"$basename"/"$basename".pdf --with-clicks false
 
-              lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
-              if [ -z "$lesson_title" ]; then
-                 lesson_title="$display_name"
-              fi
+            # Botões Colab para notebooks associados (ex: lec02-*.ipynb)
+            COLAB_BUTTONS=""
+            for nb in notebooks/${basename}-*.ipynb; do
+              [ -e "$nb" ] || continue
+              nb_file=$(basename "$nb")
+              nb_suffix="${nb_file%.ipynb}"; nb_suffix="${nb_suffix#${basename}-}"
+              colab_url="${COLAB_BASE}/${nb_file}"
+              COLAB_BUTTONS="${COLAB_BUTTONS}<a class='btn-colab' href='${colab_url}' target='_blank'><img src='https://colab.research.google.com/assets/colab-badge.svg' alt='Colab' height='18'> ${nb_suffix}</a> "
+            done
 
-              npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
-              npx serve dist/"$basename" -l 8080 &
-              SERVER_PID=$!
-
-              sleep 3
-
-              npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
-              kill $SERVER_PID
-
-              # Botões Colab para notebooks associados a esta aula (ex: lec02-*.ipynb)
-              COLAB_BUTTONS=""
-              for nb in notebooks/${basename}-*.ipynb; do
-                [ -e "$nb" ] || continue
-                nb_file=$(basename "$nb")
-                nb_label="${nb_file%.ipynb}"          # ex: lec02-keras
-                nb_suffix="${nb_label#${basename}-}"  # ex: keras
-                colab_url="${COLAB_BASE}/${nb_file}"
-                COLAB_BUTTONS="${COLAB_BUTTONS}<a class='btn-colab' href='${colab_url}' target='_blank' title='Notebook ${nb_suffix}'><img src='https://colab.research.google.com/assets/colab-badge.svg' alt='Colab ${nb_suffix}' height='18'> ${nb_suffix}</a> "
-              done
-
-              echo "<li>
-                     <div class='lesson-header'>
-                       <a class='lesson-title' href='${basename}/'>${lesson_title}</a>
-                       <div class='lesson-actions'>
-                         ${COLAB_BUTTONS}
-                         <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
-                       </div>
+            echo "<li>
+                   <div class='lesson-header'>
+                     <a class='lesson-title' href='${basename}/'>${lesson_title}</a>
+                     <div class='lesson-actions'>
+                       ${COLAB_BUTTONS}
+                       <a class='btn-pdf' href='${basename}/${basename}.pdf' download>📄 PDF</a>
                      </div>
-                    </li>" >> dist/index.html
+                   </div>
+                  </li>" >> dist/index.html
+          }
+
+          # Seção Português
+          echo "<h2>🇧🇷 Português</h2><ul class='lessons-list'>" >> dist/index.html
+          for file in lec01.md lec02.md lec03.md; do
+            [ -e "$file" ] && emit_card "$file"
           done
+          echo "</ul>" >> dist/index.html
+
+          # Seção English
+          echo "<h2>🇺🇸 English</h2><ul class='lessons-list'>" >> dist/index.html
+          for file in lec01-en.md lec02-en.md lec03-en.md; do
+            [ -e "$file" ] && emit_card "$file"
+          done
+          echo "</ul>" >> dist/index.html
 
           # Fecha o HTML com rodapé
           cat << EOF >> dist/index.html
