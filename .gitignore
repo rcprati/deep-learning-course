@@ -1,6 +1,5 @@
 node_modules/
 .slidev/
 dist/
-lec03.md
 .DS_Store
-project-assignment.md
+project-assignment.*
