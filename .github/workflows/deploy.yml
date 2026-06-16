@@ -32,10 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Chromium (versão exata usada pelo Slidev)
-        run: |
-          npm install --no-save playwright
-          npx playwright install chromium --with-deps
 
       - name: Build and Export Slides Dinamicamente
         env:
@@ -45,7 +41,7 @@ jobs:
           mkdir -p dist
 
           # 1. Instala dependências Python
-          python3 -m pip install mistune img2pdf --quiet
+          python3 -m pip install mistune --quiet
 
           # 4. Converte o README.md para HTML dentro de uma div estruturada se ele existir
           EXTRA_INFO=""
@@ -140,17 +136,13 @@ jobs:
             # Build para GitHub Pages
             npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
 
-            # Export PDF: build separado (base /), serve SPA, screenshot via API interna do Slidev
-            npx slidev build "$file" --base / --out /tmp/pdf-"$basename"
-            npx serve -s /tmp/pdf-"$basename" -l 8080 &
-            SERVE_PID=$!
-            sleep 3
-
-            node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename" "$file"
-            python3 scripts/make-pdf.py "/tmp/slides-$basename" "dist/$basename/$basename.pdf"
-
-            kill "$SERVE_PID" 2>/dev/null || true
-            rm -rf /tmp/pdf-"$basename" /tmp/slides-"$basename"
+            # PDF pré-gerado localmente — apenas copia se existir
+            if [ -f "pdfs/$basename.pdf" ]; then
+              cp "pdfs/$basename.pdf" "dist/$basename/$basename.pdf"
+              echo "  PDF copiado: pdfs/$basename.pdf"
+            else
+              echo "  PDF não encontrado em pdfs/$basename.pdf (gere localmente)"
+            fi
 
             # Botões Colab para notebooks associados (ex: lec02-*.ipynb)
             COLAB_BUTTONS=""
