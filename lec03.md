@@ -1290,7 +1290,7 @@ Corrompe a entrada com ruído. Reconstrói a imagem original limpa.<br/>
 
 # Previsão de Rotação (RotNet)
 
-<div class="grid grid-cols-2 gap-6 mt-4">
+<div class="grid grid-cols-2 gap-4 mt-2">
 
 <div>
 
@@ -1336,7 +1336,7 @@ Corrompe a entrada com ruído. Reconstrói a imagem original limpa.<br/>
 
 </div>
 
-<div class="mt-4 text-sm p-3 rounded bg-slate-800/40" v-click>
+<div class="mt-2 text-sm p-2 rounded bg-slate-800/40" v-click>
 
 **Por que funciona?** Para acertar a rotação, o modelo precisa entender *o que está na imagem* — a orientação natural de objetos. Isso força o backbone a aprender features semânticas.
 
