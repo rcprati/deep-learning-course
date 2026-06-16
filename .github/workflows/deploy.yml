@@ -33,7 +33,9 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Chromium (versão exata usada pelo Slidev)
-        run: npx playwright install chromium --with-deps
+        run: |
+          npm install --no-save playwright
+          npx playwright install chromium --with-deps
 
       - name: Build and Export Slides Dinamicamente
         env:
