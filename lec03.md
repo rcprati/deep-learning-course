@@ -1095,6 +1095,64 @@ Com apenas ~100 imagens, essa abordagem já produz alta acurácia.
 
 ---
 
+# Catastrophic Forgetting
+
+<div class="grid grid-cols-2 gap-5 mt-3">
+
+<div class="text-sm">
+
+**O problema**
+
+<v-clicks>
+
+- Ao fazer fine-tuning, os gradientes da nova tarefa **sobrescrevem** os pesos importantes para a tarefa original
+- A rede "esquece" o que aprendeu no pré-treino — perde a representação de features genéricas
+- Quanto maior o learning rate e mais camadas descongeladas, mais severo o esquecimento
+
+</v-clicks>
+
+<div class="mt-3 p-2 rounded bg-red-900/20 border border-red-500/30 text-xs" v-click>
+
+**Sintoma:** acurácia no dataset-alvo sobe rapidamente, mas o modelo perde capacidade de generalização — especialmente com poucos dados.
+
+</div>
+
+</div>
+
+<div class="text-sm" v-click>
+
+**Estratégias para mitigar**
+
+<div class="mt-2 space-y-2 text-xs">
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-amber-300">Learning rate baixo</strong><br/>
+Fine-tuning com LR 10–100× menor que o pré-treino original (ex.: 1e-4 em vez de 1e-2)
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-emerald-300">Descongelamento gradual</strong><br/>
+Descongela as camadas de cima para baixo, uma a uma, ao longo do treino
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-indigo-300">Learning rates discriminativos</strong><br/>
+Camadas mais próximas da entrada recebem LR menor; camadas da cabeça recebem LR maior
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-cyan-300">Feature extraction primeiro</strong><br/>
+Treina só a cabeça até convergir; depois descongela para fine-tuning
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # Transfer learning em código
 
 <div class="grid grid-cols-2 gap-4 mt-2">

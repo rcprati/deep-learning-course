@@ -1049,6 +1049,64 @@ With only ~100 images, this approach already yields high accuracy.
 
 ---
 
+# Catastrophic Forgetting
+
+<div class="grid grid-cols-2 gap-5 mt-3">
+
+<div class="text-sm">
+
+**The problem**
+
+<v-clicks>
+
+- During fine-tuning, gradients from the new task **overwrite** weights important for the original task
+- The network "forgets" what it learned during pre-training — loses the generic feature representation
+- The higher the learning rate and the more layers unfrozen, the more severe the forgetting
+
+</v-clicks>
+
+<div class="mt-3 p-2 rounded bg-red-900/20 border border-red-500/30 text-xs" v-click>
+
+**Symptom:** accuracy on the target dataset rises quickly, but the model loses generalization capacity — especially with limited data.
+
+</div>
+
+</div>
+
+<div class="text-sm" v-click>
+
+**Mitigation strategies**
+
+<div class="mt-2 space-y-2 text-xs">
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-amber-300">Low learning rate</strong><br/>
+Fine-tune with LR 10–100× smaller than original pre-training (e.g. 1e-4 instead of 1e-2)
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-emerald-300">Gradual unfreezing</strong><br/>
+Unfreeze layers top-to-bottom, one at a time, over the course of training
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-indigo-300">Discriminative learning rates</strong><br/>
+Layers near the input get a smaller LR; layers in the head get a larger LR
+</div>
+
+<div class="p-2 rounded bg-slate-800/40">
+<strong class="text-cyan-300">Feature extraction first</strong><br/>
+Train only the head until convergence; then unfreeze for fine-tuning
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # Transfer learning in code
 
 <div class="grid grid-cols-2 gap-4 mt-2">
