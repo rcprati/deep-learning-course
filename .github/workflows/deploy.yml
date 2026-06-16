@@ -45,7 +45,7 @@ jobs:
           mkdir -p dist
 
           # 1. Instala dependências Python
-          python3 -m pip install mistune --quiet
+          python3 -m pip install mistune img2pdf --quiet
 
           # 4. Converte o README.md para HTML dentro de uma div estruturada se ele existir
           EXTRA_INFO=""
@@ -137,14 +137,20 @@ jobs:
             lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
             if [ -z "$lesson_title" ]; then lesson_title="$basename"; fi
 
-            # Build para GitHub Pages e export de PDF
+            # Build para GitHub Pages
             npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
 
-            npx serve dist/"$basename" -l 8080 &
-            SERVER_PID=$!
+            # Export PDF: build separado (base /), serve SPA, screenshot via API interna do Slidev
+            npx slidev build "$file" --base / --out /tmp/pdf-"$basename"
+            npx serve -s /tmp/pdf-"$basename" -l 8080 &
+            SERVE_PID=$!
             sleep 3
-            npx slidev export http://localhost:8080/ --output dist/"$basename"/"$basename".pdf
-            kill $SERVER_PID 2>/dev/null || true
+
+            node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename"
+            python3 scripts/make-pdf.py "/tmp/slides-$basename" "dist/$basename/$basename.pdf"
+
+            kill "$SERVE_PID" 2>/dev/null || true
+            rm -rf /tmp/pdf-"$basename" /tmp/slides-"$basename"
 
             # Botões Colab para notebooks associados (ex: lec02-*.ipynb)
             COLAB_BUTTONS=""
