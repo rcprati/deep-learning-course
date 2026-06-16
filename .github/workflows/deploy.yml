@@ -41,11 +41,11 @@ jobs:
           CI: 'true'
         run: |
           mkdir -p dist
-          
-          # 1. Instala o parser profissional de markdown
-          python3 -m pip install mistune --quiet
 
-          # 2. Converte o README.md para HTML dentro de uma div estruturada se ele existir
+          # 1. Instala dependências Python
+          python3 -m pip install mistune img2pdf Pillow --quiet
+
+          # 4. Converte o README.md para HTML dentro de uma div estruturada se ele existir
           EXTRA_INFO=""
           if [ -f "README.md" ]; then
             MARKDOWN_HTML=$(python3 -c '
@@ -57,10 +57,10 @@ jobs:
             EXTRA_INFO="<div class='info-box'>${MARKDOWN_HTML}</div>"
           fi
 
-          # 3. ID do Google Analytics - SUBSTITUA APENAS ESTA VARIÁVEL ABAIXO:
+          # 5. ID do Google Analytics - SUBSTITUA APENAS ESTA VARIÁVEL ABAIXO:
           GA_TRACKING_ID="G-6VH6S8BP96"
 
-          # 4. Início do arquivo de índice HTML com o Script oficial do Google Analytics injetado
+          # 6. Início do arquivo de índice HTML com o Script oficial do Google Analytics injetado
           cat << EOF > dist/index.html
           <!DOCTYPE html>
           <html lang="pt-BR">
@@ -135,14 +135,32 @@ jobs:
             lesson_title=$(sed -n "s/^title:[[:space:]]*'\(.*\)'/\1/p;s/^title:[[:space:]]*\"\(.*\)\"/\1/p" "$file" | head -n 1)
             if [ -z "$lesson_title" ]; then lesson_title="$basename"; fi
 
-            # Build para GitHub Pages (base path com nome do repositório)
+            # Build para GitHub Pages
             npx slidev build "$file" --base /deep-learning-course/"$basename"/ --out dist/"$basename"
 
-            # Export PDF (usa o mesmo .md como entrada; precisa do Chromium correto instalado)
-            npx slidev export "$file" \
-              --output dist/"$basename"/"$basename".pdf \
-              --with-clicks false \
-              --timeout 60000
+            # --- Export PDF via build de produção + Playwright + img2pdf ---
+            # Conta slides no .md: cada '---' após frontmatter é um separador de slide
+            TOTAL=$(grep -c '^---$' "$file" 2>/dev/null || echo 51)
+            TOTAL=$((TOTAL - 1))
+            [ "$TOTAL" -lt 1 ] && TOTAL=50
+            echo "  Slides: $TOTAL"
+
+            # Build com base / para servir localmente
+            npx slidev build "$file" --base / --out /tmp/pdf-"$basename"
+
+            # Serve build de produção
+            python3 -m http.server 8080 --directory /tmp/pdf-"$basename" &
+            SERVE_PID=$!
+            sleep 3
+
+            # Captura screenshots de cada slide (scripts/ no repo)
+            node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename" "$TOTAL"
+
+            # Converte screenshots para PDF
+            python3 scripts/make-pdf.py "/tmp/slides-$basename" "dist/$basename/$basename.pdf"
+
+            kill "$SERVE_PID" 2>/dev/null || true
+            rm -rf /tmp/pdf-"$basename" /tmp/slides-"$basename"
 
             # Botões Colab para notebooks associados (ex: lec02-*.ipynb)
             COLAB_BUTTONS=""
