@@ -1680,7 +1680,7 @@ tipos de ruído:
 
 # Comparação dos Métodos SSL
 
-<div class="mt-4 overflow-x-auto text-sm">
+<div class="mt-2 overflow-x-auto text-xs">
 
 | Método | Tipo de sinal | Arquitetura | Pontos fortes |
 |--------|---------------|-------------|---------------|
@@ -1695,13 +1695,13 @@ tipos de ruído:
 
 </div>
 
-<div class="grid grid-cols-2 gap-3 mt-4 text-xs" v-click>
+<div class="grid grid-cols-2 gap-2 mt-2 text-xs" v-click>
 
-<div class="p-3 rounded bg-slate-800/40">
+<div class="p-2 rounded bg-slate-800/40">
 <strong class="text-amber-300">Métodos geradores</strong> (MAE, Jigsaw): o modelo reconstrói/ordena dados; aprendem geometria e textura detalhada.
 </div>
 
-<div class="p-3 rounded bg-slate-800/40">
+<div class="p-2 rounded bg-slate-800/40">
 <strong class="text-emerald-300">Métodos contrastivos</strong> (SimCLR, DINO): o modelo aprende invariâncias; aprendem semântica de alto nível.
 </div>
 

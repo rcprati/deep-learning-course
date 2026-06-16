@@ -947,195 +947,6 @@ Laço explícito: <code>zero_grad → forward → backward → step</code>. Mais
 </v-clicks>
 
 ---
-layout: section
----
-
-# Parte 7 — Visão Computacional
-
-Como representar imagens e que tarefas resolver com DL.
-
----
-
-# Tensores e imagens
-
-<div class="grid grid-cols-2 gap-8 mt-4">
-
-<div>
-
-**Tensor** = array N-dimensional de números:
-
-<div class="mt-2">
-  <TensorRanks />
-</div>
-
-</div>
-
-<div class="flex flex-col gap-4 justify-center text-sm">
-
-<div class="p-4 rounded bg-slate-800/40">
-
-**Imagem em escala de cinza**<br/>
-Matriz $H \times W$ — cada pixel: 0–255
-
-</div>
-
-<div class="p-4 rounded bg-slate-800/40">
-
-**Imagem colorida (RGB)**<br/>
-Tensor $H \times W \times 3$ — 3 canais (R, G, B)
-
-</div>
-
-<div class="p-4 rounded bg-slate-800/40">
-
-**Batch de imagens**<br/>
-Tensor $N \times H \times W \times 3$
-
-</div>
-
-</div>
-
-</div>
-
----
-
-# Tarefas de visão computacional
-
-<div class="mt-4">
-  <CVTasks />
-</div>
-
-<div class="mt-2 grid grid-cols-3 gap-3 max-w-4xl mx-auto text-xs">
-
-<div class="p-2 rounded bg-slate-800/40">
-<strong class="text-indigo-300">Classificação</strong><br/>Uma classe por imagem
-</div>
-
-<div class="p-2 rounded bg-slate-800/40">
-<strong class="text-indigo-300">Detecção</strong><br/>Várias caixas + classes
-</div>
-
-<div class="p-2 rounded bg-slate-800/40">
-<strong class="text-indigo-300">Segmentação</strong><br/>Classe por pixel
-</div>
-
-</div>
-
----
-
-# Classificação multiclasse — softmax
-
-<div class="mt-2 grid grid-cols-2 gap-8">
-
-<div>
-
-**Fashion-MNIST**: 70k imagens 28×28, 10 categorias.
-
-<div class="mt-4">
-  <FashionMnist />
-</div>
-
-</div>
-
-<div>
-
-Para $N$ classes, a camada de saída usa **softmax**:
-
-$$\mathrm{softmax}(z)_i = \frac{e^{z_i}}{\displaystyle\sum_{j=1}^N e^{z_j}}$$
-
-<div class="mt-4">
-  <SoftmaxViz />
-</div>
-
-<div class="text-sm opacity-80 mt-2">
-
-Saídas $\in (0,1)$ com soma exatamente $1$.
-
-</div>
-
-</div>
-
-</div>
-
----
-
-# Casando saída ↔ loss
-
-<div class="mt-4 max-w-5xl mx-auto">
-
-| Variável de saída | Camada de saída | Loss (Keras) |
-|:---|:---:|:---:|
-| Número real | linear (1 neurônio) | `mse` |
-| Probabilidade binária | sigmoide (1 neurônio) | `binary_crossentropy` |
-| Vetor de probabilidades | **softmax** (N neurônios) | `categorical_crossentropy` |
-| Idem, rótulos como inteiros | **softmax** (N neurônios) | `sparse_categorical_crossentropy` |
-
-</div>
-
-<div class="mt-4 text-center text-amber-300 text-sm" v-click>
-
-⚠ Loss errada para o tipo de rótulo é uma das fontes mais comuns de bug.
-
-</div>
-
----
-
-# Modelo para Fashion-MNIST — Keras vs PyTorch
-
-<div class="grid grid-cols-2 gap-4 mt-2">
-
-<div>
-
-**Keras**
-
-```python
-inp  = keras.Input(shape=(28, 28))
-x    = keras.layers.Flatten()(inp)
-x    = keras.layers.Dense(128, 'relu')(x)
-x    = keras.layers.Dropout(0.3)(x)
-x    = keras.layers.Dense(64,  'relu')(x)
-out  = keras.layers.Dense(10, 'softmax')(x)
-
-model = keras.Model(inp, out)
-model.compile(
-  loss='sparse_categorical_crossentropy',
-  optimizer='adam',
-  metrics=['accuracy'],
-)
-```
-
-</div>
-
-<div>
-
-**PyTorch**
-
-```python
-model = nn.Sequential(
-    nn.Flatten(),
-    nn.Linear(784, 128), nn.ReLU(),
-    nn.Dropout(0.3),
-    nn.Linear(128, 64),  nn.ReLU(),
-    nn.Linear(64, 10),   # logits
-)
-
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters())
-# CrossEntropyLoss já inclui o softmax
-# internamente — não adicione nn.Softmax!
-```
-
-</div>
-
-</div>
-
-<div class="mt-3 text-xs opacity-70 text-center" v-click>
-
-Baseline de ~88 % no Fashion-MNIST. Para imagens maiores, precisamos de **convoluções** — próxima aula.
-
-</div>
-
----
 layout: center
 class: text-center
 ---
@@ -1168,14 +979,6 @@ class: text-center
 <strong class="text-indigo-300">Early stopping + Dropout</strong> — regularização essencial contra overfitting
 </div>
 
-<div class="p-3 rounded bg-slate-800/40">
-<strong class="text-indigo-300">Tensor H×W×3</strong> — representação de imagens coloridas
-</div>
-
-<div class="p-3 rounded bg-slate-800/40">
-<strong class="text-indigo-300">Softmax</strong> — normaliza N logits em distribuição de probabilidade
-</div>
-
 </div>
 
 ---
@@ -1188,11 +991,12 @@ class: text-center
 
 <v-clicks>
 
-- **Convoluções** e **CNNs** — camadas que aprendem filtros visuais
+- **Tensores e imagens** — como representar pixels em arrays N-dimensionais
+- **Por que camadas densas não bastam** — parâmetros demais, sem estrutura espacial
+- **Filtros convolucionais** — detecção de bordas, texturas e padrões visuais
 - **Pooling** — redução de dimensão com preservação de informação
-- Arquiteturas clássicas: LeNet, AlexNet, VGG, ResNet
-- **Transfer learning** com modelos pré-treinados
-- **Data augmentation** para regularização em visão
+- **CNNs** — blocos Conv + Pool + FC
+- **Transfer Learning** — reutilizar modelos pré-treinados (ResNet, ImageNet)
 
 </v-clicks>
 
@@ -1236,3 +1040,4 @@ Rama Ramakrishnan, distribuído sob os termos do MIT OCW.
 <div class="mt-2 text-xs opacity-60">
 Para mais informações: https://ocw.mit.edu/terms
 </div>
+
