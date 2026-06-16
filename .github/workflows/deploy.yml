@@ -150,10 +150,10 @@ jobs:
             # Build com base / para servir localmente
             npx slidev build "$file" --base / --out /tmp/pdf-"$basename"
 
-            # Serve build de produção
-            python3 -m http.server 8080 --directory /tmp/pdf-"$basename" &
+            # Serve com SPA mode (necessário para Vue Router history mode — /1, /2 etc.)
+            npx serve -s /tmp/pdf-"$basename" -l 8080 &
             SERVE_PID=$!
-            sleep 3
+            sleep 4
 
             # Captura screenshots de cada slide (scripts/ no repo)
             node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename" "$TOTAL"

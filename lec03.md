@@ -1278,6 +1278,12 @@ Extrai dois patches aleatórios. Prevê a posição relativa entre eles (8 dire�
 <span class="opacity-50">Doersch et al., 2015</span>
 </div>
 
+<div class="p-2 rounded bg-slate-800/40" v-click>
+<div class="text-orange-300 font-semibold mb-1">🔊 Denoising Autoencoder</div>
+Corrompe a entrada com ruído. Reconstrói a imagem original limpa.<br/>
+<span class="opacity-50">Vincent et al., 2008 — DAE</span>
+</div>
+
 </div>
 
 ---
@@ -1617,6 +1623,61 @@ g(·): projector, descartado
 
 ---
 
+# Denoising Autoencoder (DAE)
+
+<div class="grid grid-cols-2 gap-6 mt-3">
+
+<div class="text-sm">
+
+**Ideia central** (Vincent et al., 2008)
+
+<v-clicks>
+
+- Corrompe a entrada: ruído gaussiano, *salt-and-pepper*, apagamento de regiões
+- O modelo aprende a mapear a versão corrompida $\tilde{x}$ de volta à original $x$
+- O encoder é forçado a capturar estrutura semântica — não pode memorizar ruído
+
+</v-clicks>
+
+<div class="mt-3 p-2 rounded bg-slate-800/40 text-xs" v-click>
+
+**Loss de reconstrução:**
+
+$$\mathcal{L} = \|x - \text{dec}(\text{enc}(\tilde{x}))\|^2$$
+
+</div>
+
+<div class="mt-2 text-xs p-2 rounded bg-orange-900/20 border border-orange-500/30" v-click>
+
+**Diferença do MAE:** DAE usa ruído contínuo em pixels; MAE mascara patches inteiros. MAE escala melhor para ViTs.
+
+</div>
+
+</div>
+
+<div class="font-mono text-xs bg-slate-900/70 p-3 rounded" v-click>
+
+```
+     x (imagem limpa)
+     │
+     ▼  corrupção
+    x̃  ──→  encoder  ──→  z  ──→  decoder
+                                      │
+                                      ▼
+                                  x̂ ≈ x
+
+tipos de ruído:
+  · gaussiano:  x̃ = x + ε,  ε ~ N(0, σ²)
+  · mascaramento:  pixels → 0 com prob. p
+  · salt-pepper:  pixels → 0 ou 255
+```
+
+</div>
+
+</div>
+
+---
+
 # Comparação dos Métodos SSL
 
 <div class="mt-4 overflow-x-auto text-sm">
@@ -1627,6 +1688,7 @@ g(·): projector, descartado
 | **Jigsaw** | Classificação de permutação | CNN | Aprende relações espaciais |
 | **Colorização** | Regressão (cores Lab) | CNN encoder-decoder | Aprende semântica de objetos naturais |
 | **Pred. Contexto** | Classificação (8 direções) | CNN | Aprende layout espacial da cena |
+| **DAE** | Reconstrução (ruído → limpo) | CNN encoder-decoder | Robusto a corrupções; pioneiro histórico |
 | **MAE** | Reconstrução de pixels | ViT + decoder | SOTA em ViTs; eficiente |
 | **SimCLR** | Contrastivo (similaridade) | CNN/ViT | Independe de rótulos; muito flexível |
 | **DINO** | Auto-distilação | ViT | Features emergentes de segmentação |
