@@ -923,15 +923,18 @@ Conv → BN                   │
 ↓                           │
 (+) ←───────────────────────┘
 ↓
-ReLU
-↓
-y = F(x,W) + x
+ReLU → y
 ```
 
 </div>
 
-<div class="mt-3 text-xs p-2 rounded bg-slate-800/40">
-Gradiente flui pelo skip sem depender de $\mathcal{F}$ → redes de **100+ camadas** treinaram com sucesso (ResNet-152).
+<div class="text-xs mt-2 opacity-60">
+BN = <em>Batch Normalization</em>: normaliza as ativações de cada camada (média 0, variância 1 por batch), acelerando a convergência e estabilizando o treino.
+</div>
+
+<div class="mt-2 text-xs p-2 rounded bg-slate-800/40">
+$$y = \mathcal{F}(\mathbf{x}, W) + \mathbf{x}$$
+Gradiente flui pelo skip sem depender de $\mathcal{F}$ → ResNet-152 treina com sucesso.
 </div>
 
 </div>
