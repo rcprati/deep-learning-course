@@ -146,7 +146,7 @@ jobs:
             SERVE_PID=$!
             sleep 3
 
-            node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename"
+            node scripts/screenshot-slides.mjs http://localhost:8080/ /tmp/slides-"$basename" "$file"
             python3 scripts/make-pdf.py "/tmp/slides-$basename" "dist/$basename/$basename.pdf"
 
             kill "$SERVE_PID" 2>/dev/null || true
