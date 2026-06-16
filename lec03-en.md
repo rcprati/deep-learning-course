@@ -887,8 +887,11 @@ BN = <em>Batch Normalization</em>: normalizes the activations of each layer (mea
 </div>
 
 <div class="mt-2 text-xs p-2 rounded bg-slate-800/40">
+
 $$y = \mathcal{F}(\mathbf{x}, W) + \mathbf{x}$$
+
 Gradient flows through the skip without depending on $\mathcal{F}$ → ResNet-152 trains successfully.
+
 </div>
 
 </div>
