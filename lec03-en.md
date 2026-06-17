@@ -771,6 +771,60 @@ flowchart LR
 
 ---
 
+# Stacking layers — hierarchy of patterns
+
+<div class="grid grid-cols-2 gap-5 mt-3">
+
+<div class="text-sm">
+
+**Why stack convolutional blocks?**
+
+<v-clicks>
+
+- Each layer sees a **local window** of the previous layer's output
+- Deeper layers have a **larger receptive field** — they see more of the image
+- The network learns a **hierarchy of representations**, from simple to complex
+
+</v-clicks>
+
+<div class="mt-4 p-3 rounded bg-indigo-900/30 border border-indigo-500/30 text-xs" v-click>
+
+**Empirical visualization** (Zeiler & Fergus, 2014): filters of trained networks show a clear progression — early layers detect edges and gradients, middle layers detect textures and parts, deep layers detect complete objects.
+
+</div>
+
+</div>
+
+<div v-click>
+
+<div class="font-mono text-xs bg-slate-900/70 p-4 rounded leading-relaxed">
+
+```
+Layer 1  →  edges and gradients
+             ╱  ╲  ─  │  ╱
+Layer 2  →  textures and corners
+             ⬡  ▦  ◈  ▨
+Layer 3  →  object parts
+             👁  👃  🦴
+Layer 4  →  objects / concepts
+             🐱  🚗  🌸
+```
+
+</div>
+
+<div class="mt-3 text-xs opacity-70">
+
+Depth → increasing abstraction.<br>
+Transfer learning works because these representations **generalize** to new domains.
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # CNN for Fashion-MNIST
 
 <div class="grid grid-cols-2 gap-4 mt-2">

@@ -817,6 +817,60 @@ flowchart LR
 
 ---
 
+# Empilhando camadas — hierarquia de padrões
+
+<div class="grid grid-cols-2 gap-5 mt-3">
+
+<div class="text-sm">
+
+**Por que empilhar blocos convolucionais?**
+
+<v-clicks>
+
+- Cada camada vê uma **janela local** da camada anterior
+- Camadas profundas têm **campo receptivo maior** — enxergam mais da imagem
+- A rede aprende uma **hierarquia de representações**, do simples ao complexo
+
+</v-clicks>
+
+<div class="mt-4 p-3 rounded bg-indigo-900/30 border border-indigo-500/30 text-xs" v-click>
+
+**Visualização empírica** (Zeiler & Fergus, 2014): filtros de redes treinadas mostram progressão clara — camadas iniciais detectam bordas e gradientes, camadas intermediárias detectam texturas e partes, camadas profundas detectam objetos completos.
+
+</div>
+
+</div>
+
+<div v-click>
+
+<div class="font-mono text-xs bg-slate-900/70 p-4 rounded leading-relaxed">
+
+```
+Camada 1  →  bordas e gradientes
+             ╱  ╲  ─  │  ╱
+Camada 2  →  texturas e cantos
+             ⬡  ▦  ◈  ▨
+Camada 3  →  partes de objetos
+             👁  👃  🦴
+Camada 4  →  objetos / conceitos
+             🐱  🚗  🌸
+```
+
+</div>
+
+<div class="mt-3 text-xs opacity-70">
+
+Profundidade → abstração crescente.<br>
+Transfer learning funciona porque estas representações **generalizam** para novos domínios.
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # CNN para Fashion-MNIST
 
 <div class="grid grid-cols-2 gap-4 mt-2">
