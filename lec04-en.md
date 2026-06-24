@@ -867,67 +867,67 @@ Center word → Context
 
 <div v-click>
 
-<svg viewBox="0 0 300 272" xmlns="http://www.w3.org/2000/svg" class="w-full mt-1">
+<svg viewBox="0 0 300 265" xmlns="http://www.w3.org/2000/svg" class="w-full mt-1">
 <defs>
 <marker id="arr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
 <path d="M0,0 L5,2.5 L0,5 Z" fill="#475569"/>
 </marker>
 </defs>
 <!-- CBOW -->
-<text x="150" y="13" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold" font-family="sans-serif">CBOW</text>
-<rect x="4" y="19" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
-<text x="33" y="30" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t-2}</text>
-<rect x="4" y="38" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
-<text x="33" y="49" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t-1}</text>
-<rect x="4" y="57" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
-<text x="33" y="68" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t+1}</text>
-<rect x="4" y="76" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
-<text x="33" y="87" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t+2}</text>
-<line x1="62" y1="27" x2="116" y2="59" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="62" y1="46" x2="116" y2="61" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="62" y1="65" x2="116" y2="63" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="62" y1="84" x2="116" y2="65" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<rect x="118" y="48" width="64" height="30" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
-<text x="150" y="60" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Embedding</text>
-<text x="150" y="71" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">W  (V×d)</text>
-<line x1="182" y1="63" x2="228" y2="63" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<rect x="230" y="50" width="66" height="26" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
-<text x="263" y="61" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_t</text>
-<text x="263" y="71" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="sans-serif">softmax</text>
-<text x="33" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">context</text>
-<text x="150" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">hidden</text>
-<text x="263" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">prediction</text>
+<text x="150" y="12" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold" font-family="sans-serif">CBOW</text>
+<rect x="4" y="18" width="56" height="15" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="32" y="29" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="monospace">w_{t-2}</text>
+<rect x="4" y="36" width="56" height="15" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="32" y="47" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="monospace">w_{t-1}</text>
+<rect x="4" y="54" width="56" height="15" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="32" y="65" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="monospace">w_{t+1}</text>
+<rect x="4" y="72" width="56" height="15" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="32" y="83" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="monospace">w_{t+2}</text>
+<line x1="60" y1="26" x2="112" y2="55" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="60" y1="44" x2="112" y2="57" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="60" y1="62" x2="112" y2="59" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="60" y1="80" x2="112" y2="61" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="114" y="46" width="62" height="28" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
+<text x="145" y="57" text-anchor="middle" fill="#c4b5fd" font-size="7" font-family="sans-serif">Embedding</text>
+<text x="145" y="67" text-anchor="middle" fill="#c4b5fd" font-size="7" font-family="sans-serif">W (V×d)</text>
+<line x1="176" y1="60" x2="222" y2="60" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="224" y="48" width="68" height="24" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="258" y="58" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="monospace">w_t</text>
+<text x="258" y="68" text-anchor="middle" fill="#6ee7b7" font-size="7" font-family="sans-serif">softmax</text>
+<text x="32" y="98" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">context</text>
+<text x="145" y="98" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">hidden</text>
+<text x="258" y="98" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">prediction</text>
 <!-- Divider -->
-<line x1="4" y1="112" x2="296" y2="112" stroke="#1e293b" stroke-width="1"/>
+<line x1="4" y1="106" x2="296" y2="106" stroke="#1e293b" stroke-width="1"/>
 <!-- Skip-gram -->
-<text x="150" y="126" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold" font-family="sans-serif">Skip-gram</text>
-<rect x="4" y="135" width="66" height="26" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
-<text x="37" y="146" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_t</text>
-<text x="37" y="156" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="sans-serif">center</text>
-<line x1="70" y1="148" x2="116" y2="148" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<rect x="118" y="133" width="64" height="30" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
-<text x="150" y="145" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Embedding</text>
-<text x="150" y="156" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">W  (V×d)</text>
-<line x1="182" y1="144" x2="228" y2="133" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="182" y1="147" x2="228" y2="147" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="182" y1="150" x2="228" y2="161" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<line x1="182" y1="153" x2="228" y2="175" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
-<rect x="230" y="124" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
-<text x="263" y="135" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t-2}</text>
-<rect x="230" y="143" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
-<text x="263" y="154" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t-1}</text>
-<rect x="230" y="162" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
-<text x="263" y="173" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t+1}</text>
-<rect x="230" y="181" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
-<text x="263" y="192" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t+2}</text>
-<text x="37" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">center</text>
-<text x="150" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">hidden</text>
-<text x="263" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">prediction</text>
+<text x="150" y="119" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold" font-family="sans-serif">Skip-gram</text>
+<rect x="4" y="128" width="60" height="24" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="34" y="138" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="monospace">w_t</text>
+<text x="34" y="148" text-anchor="middle" fill="#93c5fd" font-size="7" font-family="sans-serif">center</text>
+<line x1="64" y1="140" x2="112" y2="140" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="114" y="128" width="62" height="28" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
+<text x="145" y="139" text-anchor="middle" fill="#c4b5fd" font-size="7" font-family="sans-serif">Embedding</text>
+<text x="145" y="149" text-anchor="middle" fill="#c4b5fd" font-size="7" font-family="sans-serif">W (V×d)</text>
+<line x1="176" y1="136" x2="222" y2="125" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="176" y1="139" x2="222" y2="139" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="176" y1="142" x2="222" y2="153" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="176" y1="145" x2="222" y2="167" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="224" y="117" width="68" height="15" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="258" y="127" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="monospace">w_{t-2}</text>
+<rect x="224" y="135" width="68" height="15" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="258" y="145" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="monospace">w_{t-1}</text>
+<rect x="224" y="153" width="68" height="15" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="258" y="163" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="monospace">w_{t+1}</text>
+<rect x="224" y="171" width="68" height="15" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="258" y="181" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="monospace">w_{t+2}</text>
+<text x="34" y="200" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">center</text>
+<text x="145" y="200" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">hidden</text>
+<text x="258" y="200" text-anchor="middle" fill="#475569" font-size="7" font-family="sans-serif">prediction</text>
 <!-- Note -->
-<rect x="4" y="220" width="292" height="44" rx="4" fill="#1e293b" stroke="#334155" stroke-width="0.5"/>
-<text x="150" y="232" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="sans-serif">💡 Negative Sampling — avoids softmax over |V|</text>
-<text x="150" y="244" text-anchor="middle" fill="#64748b" font-size="7.5" font-family="sans-serif">binary classifier: is (w, context) a real pair or random?</text>
-<text x="150" y="257" text-anchor="middle" fill="#64748b" font-size="7.5" font-family="sans-serif">uses only k ≈ 5–20 negative samples per step  →  O(k) vs O(|V|)</text>
+<rect x="4" y="208" width="292" height="48" rx="4" fill="#1e293b" stroke="#334155" stroke-width="0.5"/>
+<text x="150" y="220" text-anchor="middle" fill="#94a3b8" font-size="7.5" font-weight="bold" font-family="sans-serif">💡 Negative Sampling — avoids softmax over |V|</text>
+<text x="150" y="233" text-anchor="middle" fill="#64748b" font-size="7" font-family="sans-serif">is (w, context) a real pair or random? → binary classifier</text>
+<text x="150" y="247" text-anchor="middle" fill="#64748b" font-size="7" font-family="sans-serif">k ≈ 5–20 negatives per step → O(k) instead of O(|V|)</text>
 </svg>
 
 </div>
