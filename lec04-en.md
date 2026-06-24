@@ -1317,7 +1317,7 @@ model.compile(
 
 <div>
 
-After `Embedding`, each sentence is a **matrix** $(T \times d)$. We need a **fixed vector** for the dense layer.
+After `Embedding`, each sentence is a **matrix (T×d)**. We need a **fixed vector** for the dense layer.
 
 <div class="mt-2 font-mono text-xs bg-slate-900/70 px-3 py-2 rounded">
 
@@ -1325,11 +1325,17 @@ After `Embedding`, each sentence is a **matrix** $(T \times d)$. We need a **fix
 "the cat sat"  →  Embedding
 [[0.2, -0.1, 0.8, ...],  ← "the"
  [0.7,  0.3, 0.1, ...],  ← "cat"
- [0.4, -0.2, 0.6, ...]]  ← "sat"   shape: (3,d)
+ [0.4, -0.2, 0.6, ...]]  ← "sat"   shape: (T, d)
 
-GAP → mean over T
+GAP → mean over T (dim=1)
 → [0.43, 0.0, 0.5, ...]            shape: (d,)
 ```
+
+</div>
+
+<div class="mt-2 p-2 rounded bg-violet-900/30 border border-violet-500/30 text-xs">
+
+**Why does it work?** GAP is equivalent to a **semantic BoW**: each word contributes its meaning vector, and the average captures the "mean semantic content" of the sentence. Unlike classic BoW (where "movie" and "cinema" are orthogonal vectors), here semantically similar words contribute similar vectors — the result aggregates semantics, not just counts.
 
 </div>
 
@@ -1342,7 +1348,7 @@ GAP → mean over T
 <div class="space-y-1">
 
 <div class="p-2 rounded bg-slate-800/40 border border-slate-600/30">
-<span class="font-bold">Flatten</span> — concatenates all vectors into $(T \times d)$, requires fixed length.
+<span class="font-bold">Flatten</span> — concatenates all vectors into (T×d), requires fixed length.
 </div>
 
 <div class="p-2 rounded bg-slate-800/40 border border-slate-600/30">
@@ -1355,8 +1361,10 @@ GAP → mean over T
 
 </div>
 
-<div class="mt-2 p-2 rounded bg-indigo-900/30 border border-indigo-500/30">
-GAP is equivalent to a BoW weighted by embeddings — simple yet surprisingly effective.
+<div class="mt-2 p-2 rounded bg-amber-900/30 border border-amber-500/30">
+
+**Shared limitation:** none of these strategies preserve token **order**. For that, we need RNNs or Transformers.
+
 </div>
 
 </div>

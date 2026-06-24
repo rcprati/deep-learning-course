@@ -1320,7 +1320,7 @@ model.compile(
 
 <div>
 
-Após o `Embedding`, cada frase é uma **matriz** $(T \times d)$. Precisamos de um **vetor fixo** para a camada densa.
+Após o `Embedding`, cada frase é uma **matriz (T×d)**. Precisamos de um **vetor fixo** para a camada densa.
 
 <div class="mt-2 font-mono text-xs bg-slate-900/70 px-3 py-2 rounded">
 
@@ -1328,11 +1328,17 @@ Após o `Embedding`, cada frase é uma **matriz** $(T \times d)$. Precisamos de 
 "o gato sentou"  →  Embedding
 [[0.2, -0.1, 0.8, ...],  ← "o"
  [0.7,  0.3, 0.1, ...],  ← "gato"
- [0.4, -0.2, 0.6, ...]]  ← "sentou"   shape: (3,d)
+ [0.4, -0.2, 0.6, ...]]  ← "sentou"   shape: (T, d)
 
-GAP → média ao longo de T
+GAP → média ao longo de T (dim=1)
 → [0.43, 0.0, 0.5, ...]              shape: (d,)
 ```
+
+</div>
+
+<div class="mt-2 p-2 rounded bg-violet-900/30 border border-violet-500/30 text-xs">
+
+**Por que funciona?** GAP é equivalente a um **BoW semântico**: cada palavra contribui com seu vetor de significado, e a média captura o "conteúdo médio" da frase. Ao contrário do BoW clássico (onde "filme" e "cinema" são vetores ortogonais), aqui palavras semanticamente próximas contribuem com vetores próximos — o resultado agrega semântica, não apenas contagem.
 
 </div>
 
@@ -1345,7 +1351,7 @@ GAP → média ao longo de T
 <div class="space-y-1">
 
 <div class="p-2 rounded bg-slate-800/40 border border-slate-600/30">
-<span class="font-bold">Flatten</span> — concatena todos os vetores em $(T \times d)$, requer comprimento fixo.
+<span class="font-bold">Flatten</span> — concatena todos os vetores em (T×d), requer comprimento fixo.
 </div>
 
 <div class="p-2 rounded bg-slate-800/40 border border-slate-600/30">
@@ -1358,8 +1364,10 @@ GAP → média ao longo de T
 
 </div>
 
-<div class="mt-2 p-2 rounded bg-indigo-900/30 border border-indigo-500/30">
-GAP equivale a um BoW ponderado pelos embeddings — simples mas surpreendentemente eficaz.
+<div class="mt-2 p-2 rounded bg-amber-900/30 border border-amber-500/30">
+
+**Limitação comum a todos:** nenhuma dessas estratégias preserva a **ordem** dos tokens. Para isso, precisamos de RNNs ou Transformers.
+
 </div>
 
 </div>
