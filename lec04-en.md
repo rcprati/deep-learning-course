@@ -867,21 +867,68 @@ Center word → Context
 
 <div v-click>
 
-**Skip-gram objective**
-
-Maximize the log-joint probability of contexts:
-
-$$\mathcal{L} = \frac{1}{T} \sum_{t=1}^{T} \sum_{\substack{-c \le j \le c \\ j \neq 0}} \log P(w_{t+j} \mid w_t)$$
-
-with
-
-$$P(w_O \mid w_I) = \frac{\exp(\mathbf{v}_{w_O}^\top \mathbf{v}_{w_I})}{\sum_{w=1}^{|\mathcal{V}|} \exp(\mathbf{v}_w^\top \mathbf{v}_{w_I})}$$
-
-<div class="mt-1 text-xs opacity-70">
-
-The softmax over $|\mathcal{V}|$ is expensive — **negative sampling** is used: distinguish the real context from $k$ random negative samples.
-
-</div>
+<svg viewBox="0 0 300 272" xmlns="http://www.w3.org/2000/svg" class="w-full mt-1">
+<defs>
+<marker id="arr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+<path d="M0,0 L5,2.5 L0,5 Z" fill="#475569"/>
+</marker>
+</defs>
+<!-- CBOW -->
+<text x="150" y="13" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold" font-family="sans-serif">CBOW</text>
+<rect x="4" y="19" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="33" y="30" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t-2}</text>
+<rect x="4" y="38" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="33" y="49" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t-1}</text>
+<rect x="4" y="57" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="33" y="68" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t+1}</text>
+<rect x="4" y="76" width="58" height="16" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="33" y="87" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_{t+2}</text>
+<line x1="62" y1="27" x2="116" y2="59" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="62" y1="46" x2="116" y2="61" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="62" y1="65" x2="116" y2="63" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="62" y1="84" x2="116" y2="65" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="118" y="48" width="64" height="30" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
+<text x="150" y="60" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Embedding</text>
+<text x="150" y="71" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">W  (V×d)</text>
+<line x1="182" y1="63" x2="228" y2="63" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="230" y="50" width="66" height="26" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="263" y="61" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_t</text>
+<text x="263" y="71" text-anchor="middle" fill="#6ee7b7" font-size="8" font-family="sans-serif">softmax</text>
+<text x="33" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">context</text>
+<text x="150" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">hidden</text>
+<text x="263" y="103" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">prediction</text>
+<!-- Divider -->
+<line x1="4" y1="112" x2="296" y2="112" stroke="#1e293b" stroke-width="1"/>
+<!-- Skip-gram -->
+<text x="150" y="126" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold" font-family="sans-serif">Skip-gram</text>
+<rect x="4" y="135" width="66" height="26" rx="3" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="37" y="146" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="monospace">w_t</text>
+<text x="37" y="156" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="sans-serif">center</text>
+<line x1="70" y1="148" x2="116" y2="148" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="118" y="133" width="64" height="30" rx="4" fill="#3b0764" stroke="#8b5cf6" stroke-width="1"/>
+<text x="150" y="145" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Embedding</text>
+<text x="150" y="156" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">W  (V×d)</text>
+<line x1="182" y1="144" x2="228" y2="133" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="182" y1="147" x2="228" y2="147" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="182" y1="150" x2="228" y2="161" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<line x1="182" y1="153" x2="228" y2="175" stroke="#475569" stroke-width="0.8" marker-end="url(#arr)"/>
+<rect x="230" y="124" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="263" y="135" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t-2}</text>
+<rect x="230" y="143" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="263" y="154" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t-1}</text>
+<rect x="230" y="162" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="263" y="173" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t+1}</text>
+<rect x="230" y="181" width="66" height="16" rx="3" fill="#134e4a" stroke="#10b981" stroke-width="0.7"/>
+<text x="263" y="192" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">w_{t+2}</text>
+<text x="37" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">center</text>
+<text x="150" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">hidden</text>
+<text x="263" y="210" text-anchor="middle" fill="#475569" font-size="7.5" font-family="sans-serif">prediction</text>
+<!-- Note -->
+<rect x="4" y="220" width="292" height="44" rx="4" fill="#1e293b" stroke="#334155" stroke-width="0.5"/>
+<text x="150" y="232" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="sans-serif">💡 Negative Sampling — avoids softmax over |V|</text>
+<text x="150" y="244" text-anchor="middle" fill="#64748b" font-size="7.5" font-family="sans-serif">binary classifier: is (w, context) a real pair or random?</text>
+<text x="150" y="257" text-anchor="middle" fill="#64748b" font-size="7.5" font-family="sans-serif">uses only k ≈ 5–20 negative samples per step  →  O(k) vs O(|V|)</text>
+</svg>
 
 </div>
 
