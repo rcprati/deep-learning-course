@@ -1190,16 +1190,6 @@ vetor("where") = Σ vetores dos n-gramas
 
 </div>
 
-<div class="mt-2 font-mono text-xs bg-slate-900/70 px-2 py-1.5 rounded">
-
-```python
-import fasttext.util
-fasttext.util.download_model('pt', if_exists='ignore')
-ft = fasttext.load_model('cc.pt.300.bin')
-ft.get_word_vector("correndo")   # OOV? não importa
-```
-
-</div>
 
 </div>
 
