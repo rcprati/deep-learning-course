@@ -1126,6 +1126,87 @@ quente ↔ frio · rápido ↔ lento · grande ↔ pequeno
 
 ---
 
+# FastText — Embeddings de Subpalavras
+
+<div class="grid grid-cols-2 gap-6 mt-3 text-sm">
+
+<div>
+
+**Problema do Word2Vec/GloVe:** cada palavra tem um único vetor — palavras fora do vocabulário (OOV) ficam sem representação.
+
+**Ideia do FastText** (Bojanowski et al., 2017):  
+em vez de aprender um vetor por palavra, aprende vetores para **n-gramas de caracteres**.
+
+<div class="mt-2 font-mono text-xs bg-slate-900/70 px-3 py-2 rounded">
+
+```
+"where"  →  n-gramas (n=3):
+  <wh, whe, her, ere, re>
+  + o token inteiro <where>
+
+vetor("where") = Σ vetores dos n-gramas
+```
+
+</div>
+
+<div class="mt-2 p-2 rounded bg-emerald-900/30 border border-emerald-500/30 text-xs">
+
+✅ **OOV:** "whereabouts" nunca visto → combina n-gramas conhecidos  
+✅ **Morfologia:** "correr", "correndo", "corrida" compartilham n-gramas  
+✅ **Ruído/typos:** "teh" ≈ "the" via n-gramas sobrepostos
+
+</div>
+
+</div>
+
+<div v-click>
+
+**Comparação**
+
+<div class="text-xs space-y-1 mt-1">
+<div class="grid grid-cols-3 gap-1 font-bold text-slate-400 pb-1 border-b border-slate-700">
+<div></div><div class="text-center">Word2Vec / GloVe</div><div class="text-center">FastText</div>
+</div>
+<div class="grid grid-cols-3 gap-1 py-1 border-b border-slate-800">
+<div class="text-slate-400">Unidade</div><div class="text-center">palavra</div><div class="text-center">n-grama de char</div>
+</div>
+<div class="grid grid-cols-3 gap-1 py-1 border-b border-slate-800">
+<div class="text-slate-400">OOV</div><div class="text-center text-red-400">❌ sem vetor</div><div class="text-center text-emerald-400">✅ compõe</div>
+</div>
+<div class="grid grid-cols-3 gap-1 py-1 border-b border-slate-800">
+<div class="text-slate-400">Morfologia</div><div class="text-center text-red-400">❌ ignora</div><div class="text-center text-emerald-400">✅ captura</div>
+</div>
+<div class="grid grid-cols-3 gap-1 py-1 border-b border-slate-800">
+<div class="text-slate-400">Velocidade</div><div class="text-center text-emerald-400">✅ rápido</div><div class="text-center text-amber-400">⚠ mais lento</div>
+</div>
+<div class="grid grid-cols-3 gap-1 py-1">
+<div class="text-slate-400">Tamanho</div><div class="text-center text-emerald-400">✅ menor</div><div class="text-center text-amber-400">⚠ maior</div>
+</div>
+</div>
+
+<div class="mt-3 p-2 rounded bg-indigo-900/30 border border-indigo-500/30 text-xs">
+
+**Uso prático:** FastText é especialmente útil em idiomas com **morfologia rica** (português, alemão, finlandês) e em textos com erros ortográficos (redes sociais). Vetores pré-treinados disponíveis para 157 idiomas em [fasttext.cc](https://fasttext.cc).
+
+</div>
+
+<div class="mt-2 font-mono text-xs bg-slate-900/70 px-2 py-1.5 rounded">
+
+```python
+import fasttext.util
+fasttext.util.download_model('pt', if_exists='ignore')
+ft = fasttext.load_model('cc.pt.300.bin')
+ft.get_word_vector("correndo")   # OOV? não importa
+```
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # Embeddings estáticos vs contextuais
 
 <div class="mt-4 text-sm">
