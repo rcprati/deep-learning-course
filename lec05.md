@@ -335,26 +335,24 @@ flowchart LR
 
 <div class="grid grid-cols-3 gap-3 mt-2 text-xs">
 
-<div class="p-3 rounded bg-slate-800/40 border border-slate-600/30" v-click>
+<div class="p-2 rounded bg-slate-800/40 border border-slate-600/30" v-click>
 
 **Pesos compartilhados**  
-$W_h, W_x, \mathbf{b}$ são os **mesmos** em todos os passos.  
-Isso mantém o número de parâmetros fixo independente do comprimento da sequência.
+$W_h, W_x, \mathbf{b}$ são os **mesmos** em todos os passos — número de parâmetros fixo independente do comprimento.
 
 </div>
 
-<div class="p-3 rounded bg-slate-800/40 border border-slate-600/30" v-click>
+<div class="p-2 rounded bg-slate-800/40 border border-slate-600/30" v-click>
 
 **Estado inicial**  
-$\mathbf{h}_0$ é tipicamente inicializado com zeros.  
-Para batch multi-sequência, cada sequência tem seu próprio $\mathbf{h}_0$.
+$\mathbf{h}_0$ inicializado com zeros. Cada sequência no batch tem seu próprio $\mathbf{h}_0$.
 
 </div>
 
-<div class="p-3 rounded bg-slate-800/40 border border-slate-600/30" v-click>
+<div class="p-2 rounded bg-slate-800/40 border border-slate-600/30" v-click>
 
 **Saída**  
-Pode-se usar $\mathbf{h}_T$ (último estado) para classificação, ou todos os $\mathbf{h}_t$ para tarefas token-a-token (ex: NER, tradução).
+$\mathbf{h}_T$ (último estado) para classificação; todos os $\mathbf{h}_t$ para tarefas token-a-token (NER, tradução).
 
 </div>
 
@@ -368,7 +366,7 @@ Pode-se usar $\mathbf{h}_T$ (último estado) para classificação, ou todos os $
 
 <div class="mt-2">
 
-```mermaid {scale: 0.58}
+```mermaid {scale: 0.50}
 flowchart LR
   subgraph oo ["Many-to-one"]
     direction LR
@@ -395,30 +393,27 @@ flowchart LR
 
 <div class="grid grid-cols-3 gap-3 mt-2 text-xs">
 
-<div class="p-3 rounded bg-cyan-900/30 border border-cyan-500/30">
+<div class="p-2 rounded bg-cyan-900/30 border border-cyan-500/30">
 
-**Many-to-one**
-Sequência → um rótulo
+**Many-to-one** — Sequência → rótulo
 
-Ex: análise de sentimento, classificação de texto, detecção de spam
-
-</div>
-
-<div class="p-3 rounded bg-violet-900/30 border border-violet-500/30">
-
-**One-to-many**
-Um vetor → sequência
-
-Ex: geração de legenda de imagem (*image captioning*)
+Ex: sentimento, classificação de texto
 
 </div>
 
-<div class="p-3 rounded bg-emerald-900/30 border border-emerald-500/30">
+<div class="p-2 rounded bg-violet-900/30 border border-violet-500/30">
 
-**Many-to-many**
-Sequência → sequência
+**One-to-many** — Vetor → sequência
 
-Ex: NER (mesmo comprimento), tradução com seq2seq (comprimento diferente)
+Ex: *image captioning*
+
+</div>
+
+<div class="p-2 rounded bg-emerald-900/30 border border-emerald-500/30">
+
+**Many-to-many** — Seq → seq
+
+Ex: NER (mesmo comprimento), seq2seq (comprimento diferente)
 
 </div>
 
@@ -490,7 +485,7 @@ Se $\|W_h\| > 1$, o produto cresce **exponencialmente** → NaN / divergência n
 
 <div class="mt-2 text-sm">
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-2 gap-4">
 
 <div>
 
@@ -511,11 +506,7 @@ gradiente ← 0.9^100 ≈ 2×10⁻⁵ (efetivamente zero)
 
 </div>
 
-<div class="mt-3 text-xs opacity-70">
-
-A rede "esquece" o que aconteceu mais de ~10–20 passos atrás.
-
-</div>
+<div class="mt-1 text-xs opacity-70">A rede "esquece" dependências acima de ~10–20 passos.</div>
 
 </div>
 
@@ -523,10 +514,9 @@ A rede "esquece" o que aconteceu mais de ~10–20 passos atrás.
 
 **Consequência prática**
 
-<div class="p-3 rounded bg-red-900/20 border border-red-500/30 text-xs mt-2">
+<div class="p-2 rounded bg-red-900/20 border border-red-500/30 text-xs mt-1">
 
-❌ RNNs vanilla não conseguem aprender dependências de longo alcance  
-❌ Em tarefas como tradução ou análise de documentos longos, o desempenho é ruim
+❌ RNNs vanilla falham em dependências longas (tradução, documentos)
 
 </div>
 
@@ -539,10 +529,9 @@ torch.nn.utils.clip_grad_norm_(
 )
 ```
 
-<div class="p-3 rounded bg-emerald-900/30 border border-emerald-500/30 text-xs mt-2">
+<div class="p-2 rounded bg-emerald-900/30 border border-emerald-500/30 text-xs mt-1">
 
-✅ Gradient clipping resolve o *exploding gradient*  
-❌ Mas **não** resolve o vanishing — precisamos de uma arquitetura diferente: **LSTM**
+✅ Resolve o *exploding gradient* · ❌ **não** resolve o vanishing → precisa de **LSTM**
 
 </div>
 
@@ -1082,31 +1071,20 @@ layout: section
 <div>
 
 ```python
-import torch
 import torch.nn as nn
 
-# Sequência: (batch=2, seq_len=10, input_size=64)
-x = torch.randn(2, 10, 64)
+x = torch.randn(2, 10, 64)  # (batch, seq, feat)
 
-# LSTM
-lstm = nn.LSTM(
-    input_size=64,
-    hidden_size=128,
-    num_layers=2,
-    batch_first=True,   # (batch, seq, feat)
-    dropout=0.2,
-    bidirectional=False
-)
+lstm = nn.LSTM(input_size=64, hidden_size=128,
+               num_layers=2, batch_first=True,
+               dropout=0.2, bidirectional=False)
 
-# Forward pass
-# h0, c0: (num_layers, batch, hidden)
-h0 = torch.zeros(2, 2, 128)
+h0 = torch.zeros(2, 2, 128)  # (layers, batch, hidden)
 c0 = torch.zeros(2, 2, 128)
 
 output, (hn, cn) = lstm(x, (h0, c0))
 # output: (2, 10, 128) — todos os h_t
-# hn:     (2, 2, 128)  — último h de cada camada
-# cn:     (2, 2, 128)  — último c de cada camada
+# hn/cn:  (2, 2, 128)  — último estado de cada camada
 ```
 
 </div>
@@ -1115,28 +1093,21 @@ output, (hn, cn) = lstm(x, (h0, c0))
 
 ```python
 # GRU — mesma interface, sem c
-gru = nn.GRU(
-    input_size=64,
-    hidden_size=128,
-    num_layers=2,
-    batch_first=True,
-    bidirectional=True  # hidden_size × 2 na saída
-)
+gru = nn.GRU(input_size=64, hidden_size=128,
+             num_layers=2, batch_first=True,
+             bidirectional=True)  # saída ×2
 
 output, hn = gru(x)
-# output: (2, 10, 256) — bidirecional → ×2
-# hn:     (4, 2, 128)  — 2 layers × 2 direções
+# output: (2, 10, 256)  bidirecional → ×2
+# hn:     (4, 2, 128)   2 layers × 2 direções
 
-# Classificação: usar último token
-last_hidden = output[:, -1, :]  # (2, 256)
-
-# Ou média sobre a sequência
-mean_hidden = output.mean(dim=1) # (2, 256)
+last_hidden = output[:, -1, :]   # último token
+mean_hidden = output.mean(dim=1) # média
 ```
 
-<div class="mt-3 p-2 rounded bg-slate-800/40 border border-slate-600/30 text-xs">
+<div class="mt-2 p-2 rounded bg-slate-800/40 border border-slate-600/30 text-xs">
 
-Com `batch_first=False` (padrão): formato `(seq, batch, feat)`. Recomendo sempre usar `batch_first=True` para consistência com Keras.
+Use sempre `batch_first=True` — formato `(batch, seq, feat)`, consistente com Keras.
 
 </div>
 
@@ -1168,17 +1139,16 @@ class SentimentLSTM(nn.Module):
         last = self.dropout(last)
         return self.fc(last)                # (batch, num_classes)
 
-model     = SentimentLSTM(10_000, 128, 256, 2, 2)  # binário: pos/neg
+model     = SentimentLSTM(10_000, 128, 256, 2, 2)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for epoch in range(10):
-    for tokens, labels in train_loader:
-        logits = model(tokens)
-        loss   = criterion(logits, labels)
-        optimizer.zero_grad(); loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # clipping!
-        optimizer.step()
+for tokens, labels in train_loader:
+    logits = model(tokens)
+    loss   = criterion(logits, labels)
+    optimizer.zero_grad(); loss.backward()
+    nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    optimizer.step()
 ```
 
 </div>
@@ -1230,24 +1200,13 @@ model.compile(
     optimizer=keras.optimizers.Adam(1e-3),
     metrics=['accuracy']
 )
-model.summary()
 
-# Model: "sequential"
-# ___________________________________________________
-# Layer (type)           Output Shape      Param #
-# ===================================================
-# text_vectorization     (None, 128)             0
-# embedding              (None, 128, 128)  1,280,000
-# bidirectional          (None, 128, 256)    263,168
-# bidirectional_1        (None, 128)          98,816
-# dense                  (None, 64)           8,256
-# dropout                (None, 64)               0
-# dense_1                (None, 1)               65
-# ===================================================
-
-model.fit(train_texts, train_labels,
-          validation_split=0.2, epochs=10,
-          batch_size=64)
+# Treinar
+history = model.fit(
+    train_texts, train_labels,
+    validation_split=0.2,
+    epochs=10, batch_size=64
+)
 ```
 
 </div>
@@ -1332,7 +1291,7 @@ flowchart LR
 
 <div class="mt-3 p-3 rounded bg-indigo-900/30 border border-indigo-500/30 text-xs" v-click>
 
-**Em 2017–2018**, LSTMs eram o estado da arte em tradução, sumarização e reconhecimento de fala. Com a chegada dos **Transformers** (Vaswani et al., 2017), foram gradualmente substituídos — mas RNNs/LSTMs ainda são úteis para sequências de baixa latência, dispositivos com pouca memória e tarefas de séries temporais.
+**2017–2018:** LSTMs dominavam tradução, sumarização e reconhecimento de fala. Com os **Transformers** (Vaswani et al., 2017), foram gradualmente substituídos — mas seguem úteis em inferência de baixa latência, dispositivos embarcados e séries temporais.
 
 </div>
 

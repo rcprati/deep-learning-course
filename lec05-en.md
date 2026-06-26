@@ -368,7 +368,7 @@ Use $\mathbf{h}_T$ (last state) for classification, or all $\mathbf{h}_t$ for to
 
 <div class="mt-2">
 
-```mermaid {scale: 0.58}
+```mermaid {scale: 0.50}
 flowchart LR
   subgraph oo ["Many-to-one"]
     direction LR
@@ -490,7 +490,7 @@ If $\|W_h\| > 1$, the product grows **exponentially** → NaN / training diverge
 
 <div class="mt-2 text-sm">
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-2 gap-4">
 
 <div>
 
@@ -1084,31 +1084,20 @@ layout: section
 <div>
 
 ```python
-import torch
 import torch.nn as nn
 
-# Sequence: (batch=2, seq_len=10, input_size=64)
-x = torch.randn(2, 10, 64)
+x = torch.randn(2, 10, 64)  # (batch, seq, feat)
 
-# LSTM
-lstm = nn.LSTM(
-    input_size=64,
-    hidden_size=128,
-    num_layers=2,
-    batch_first=True,   # (batch, seq, feat)
-    dropout=0.2,
-    bidirectional=False
-)
+lstm = nn.LSTM(input_size=64, hidden_size=128,
+               num_layers=2, batch_first=True,
+               dropout=0.2, bidirectional=False)
 
-# Forward pass
-# h0, c0: (num_layers, batch, hidden)
-h0 = torch.zeros(2, 2, 128)
+h0 = torch.zeros(2, 2, 128)  # (layers, batch, hidden)
 c0 = torch.zeros(2, 2, 128)
 
 output, (hn, cn) = lstm(x, (h0, c0))
 # output: (2, 10, 128) — all h_t
-# hn:     (2, 2, 128)  — last h per layer
-# cn:     (2, 2, 128)  — last c per layer
+# hn/cn:  (2, 2, 128)  — last state per layer
 ```
 
 </div>
@@ -1170,17 +1159,16 @@ class SentimentLSTM(nn.Module):
         last = self.dropout(last)
         return self.fc(last)                # (batch, num_classes) — logits
 
-model     = SentimentLSTM(10_000, 128, 256, 2, 2)  # binary: pos/neg
+model     = SentimentLSTM(10_000, 128, 256, 2, 2)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for epoch in range(10):
-    for tokens, labels in train_loader:
-        logits = model(tokens)
-        loss   = criterion(logits, labels)
-        optimizer.zero_grad(); loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # clipping!
-        optimizer.step()
+for tokens, labels in train_loader:
+    logits = model(tokens)
+    loss   = criterion(logits, labels)
+    optimizer.zero_grad(); loss.backward()
+    nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    optimizer.step()
 ```
 
 </div>
@@ -1232,24 +1220,13 @@ model.compile(
     optimizer=keras.optimizers.Adam(1e-3),
     metrics=['accuracy']
 )
-model.summary()
 
-# Model: "sequential"
-# ___________________________________________________
-# Layer (type)           Output Shape      Param #
-# ===================================================
-# text_vectorization     (None, 128)             0
-# embedding              (None, 128, 128)  1,280,000
-# bidirectional          (None, 128, 256)    263,168
-# bidirectional_1        (None, 128)          98,816
-# dense                  (None, 64)           8,256
-# dropout                (None, 64)               0
-# dense_1                (None, 1)               65
-# ===================================================
-
-model.fit(train_texts, train_labels,
-          validation_split=0.2, epochs=10,
-          batch_size=64)
+# Train
+history = model.fit(
+    train_texts, train_labels,
+    validation_split=0.2,
+    epochs=10, batch_size=64
+)
 ```
 
 </div>
