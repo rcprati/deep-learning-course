@@ -107,7 +107,7 @@ Na aula anterior vimos RNNs e LSTMs como modelos para sequências. Por que não 
 
 **Processamento sequencial**
 
-RNNs calculam h_t a partir de h_{t-1} — impossível paralelizar. N tokens = N passos em série, mesmo em GPUs.
+RNNs calculam `h_t` a partir de `h_{t-1}` — impossível paralelizar. N tokens = N passos em série, mesmo em GPUs.
 
 ❌ Treinamento lento em sequências longas
 
@@ -127,9 +127,9 @@ Gradientes se dissipam ao retropropagar por muitos passos. LSTMs atenuam, mas n�
 
 **Contexto comprimido**
 
-Toda a história da sequência é comprimida em um único vetor h_t. Informação de tokens distantes se dilui progressivamente.
+Toda a história da sequência é comprimida em um único vetor `h_t`. Informação de tokens distantes se dilui progressivamente.
 
-❌ Em sequências longas, h_t quase não carrega informação dos primeiros tokens
+❌ Em sequências longas, `h_t` quase não carrega informação dos primeiros tokens
 
 </div>
 

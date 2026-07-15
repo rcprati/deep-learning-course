@@ -107,7 +107,7 @@ In the previous lecture we covered RNNs and LSTMs as sequence models. Why aren't
 
 **Sequential processing**
 
-RNNs compute h_t from h_{t-1} — impossible to parallelize. N tokens = N serial steps, even on GPUs.
+RNNs compute `h_t` from `h_{t-1}` — impossible to parallelize. N tokens = N serial steps, even on GPUs.
 
 ❌ Slow training on long sequences
 
@@ -127,9 +127,9 @@ Gradients dissipate when backpropagating through many steps. LSTMs mitigate but 
 
 **Compressed context**
 
-The entire sequence history is compressed into a single vector h_t. Information from distant tokens progressively dilutes.
+The entire sequence history is compressed into a single vector `h_t`. Information from distant tokens progressively dilutes.
 
-❌ In long sequences, h_t carries almost no information from the first tokens
+❌ In long sequences, `h_t` carries almost no information from the first tokens
 
 </div>
 
