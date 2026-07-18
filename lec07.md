@@ -81,6 +81,77 @@ ViT, TabTransformer e multimodalidade
 </div>
 
 ---
+
+# O Transformer transforma embeddings
+
+<div class="text-sm text-slate-300 mb-3 italic">
+"Jacob <strong class="text-amber-300 not-italic">Station</strong> lives nearby the train <strong class="text-sky-300 not-italic">station</strong> close to the radio <strong class="text-emerald-300 not-italic">station</strong>"
+</div>
+
+<div class="grid gap-x-3 gap-y-2 text-xs items-center" style="grid-template-columns: 7rem 1fr 1fr 7rem 1fr">
+
+<div></div>
+<div class="font-semibold text-blue-300 text-center">Emb. inicial<br><span class="text-slate-500 font-normal">token → vetor</span></div>
+<div class="font-semibold text-violet-300 text-center">+ Enc. posicional<br><span class="text-slate-500 font-normal">seno / cosseno</span></div>
+<div class="font-semibold text-orange-300 text-center text-center">Cabeças<br><span class="text-slate-500 font-normal">4 perspectivas</span></div>
+<div class="font-semibold text-emerald-300 text-center">Contextualizado<br><span class="text-slate-500 font-normal">W_O + FFN</span></div>
+
+<div class="text-center py-1 px-2 rounded bg-amber-900/40 border border-amber-500/40 font-mono text-amber-300 leading-tight">station[1]<br><span class="text-slate-400 text-xs">Jacob</span></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#3b82f6 0%,#ef4444 17%,#3b82f6 30%,#ef4444 44%,#3b82f6 57%,#ef4444 71%,#3b82f6 84%,#ef4444 100%)"></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#7c3aed 0%,#3b82f6 13%,#ef4444 26%,#3b82f6 39%,#ef4444 53%,#3b82f6 66%,#ef4444 80%,#7c3aed 100%)"></div>
+<div class="grid grid-cols-4 gap-0.5 h-8">
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#ef4444,#f97316)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#3b82f6,#ef4444)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#f97316,#3b82f6)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#ef4444,#f97316)"></div>
+</div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#ef4444 0%,#f97316 22%,#ef4444 40%,#f97316 57%,#ef4444 72%,#f97316 87%,#ef4444 100%)"></div>
+
+<div class="text-center py-1 px-2 rounded bg-sky-900/40 border border-sky-500/40 font-mono text-sky-300 leading-tight">station[6]<br><span class="text-slate-400 text-xs">train</span></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#3b82f6 0%,#ef4444 17%,#3b82f6 30%,#ef4444 44%,#3b82f6 57%,#ef4444 71%,#3b82f6 84%,#ef4444 100%)"></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#3b82f6 0%,#ef4444 16%,#7c3aed 29%,#3b82f6 43%,#ef4444 57%,#7c3aed 71%,#3b82f6 85%,#ef4444 100%)"></div>
+<div class="grid grid-cols-4 gap-0.5 h-8">
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#10b981,#3b82f6)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#3b82f6,#10b981)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#10b981,#3b82f6)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#3b82f6,#10b981)"></div>
+</div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#10b981 0%,#3b82f6 22%,#10b981 40%,#3b82f6 57%,#10b981 72%,#3b82f6 86%,#10b981 100%)"></div>
+
+<div class="text-center py-1 px-2 rounded bg-emerald-900/40 border border-emerald-500/40 font-mono text-emerald-300 leading-tight">station[11]<br><span class="text-slate-400 text-xs">radio</span></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#3b82f6 0%,#ef4444 17%,#3b82f6 30%,#ef4444 44%,#3b82f6 57%,#ef4444 71%,#3b82f6 84%,#ef4444 100%)"></div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#ef4444 0%,#3b82f6 14%,#7c3aed 28%,#ef4444 43%,#3b82f6 58%,#7c3aed 72%,#ef4444 86%,#3b82f6 100%)"></div>
+<div class="grid grid-cols-4 gap-0.5 h-8">
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#3b82f6,#10b981)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#10b981,#3b82f6)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#3b82f6,#10b981)"></div>
+<div class="rounded-sm" style="background:linear-gradient(to bottom,#10b981,#ef4444)"></div>
+</div>
+<div class="h-8 rounded" style="background:linear-gradient(to right,#3b82f6 0%,#10b981 20%,#3b82f6 37%,#10b981 54%,#3b82f6 68%,#10b981 83%,#3b82f6 100%)"></div>
+
+</div>
+
+<div class="grid gap-x-3 mt-3 text-xs" style="grid-template-columns: 7rem 1fr 1fr 7rem 1fr">
+
+<div></div>
+<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/20 text-center text-slate-300">
+Mesmo token →<br><strong>mesmo vetor</strong>
+</div>
+<div class="p-1.5 rounded bg-violet-900/20 border border-violet-500/20 text-center text-slate-300">
+Station[1] ≠ [6] ≠ [11]<br><strong>posição codificada</strong>
+</div>
+<div class="p-1.5 rounded bg-orange-900/20 border border-orange-500/20 text-center text-slate-300">
+Cada cabeça:<br><strong>uma relação</strong>
+</div>
+<div class="p-1.5 rounded bg-emerald-900/20 border border-emerald-500/20 text-center text-slate-300">
+Jacob ≠ trem ≠ rádio<br><strong>contexto integrado</strong>
+</div>
+
+</div>
+
+<div class="text-right text-xs text-slate-600 mt-1 italic">barras ilustrativas — valores reais visualizados no notebook</div>
+
+---
 layout: section
 ---
 
