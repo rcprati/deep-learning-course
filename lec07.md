@@ -539,6 +539,152 @@ Pré-treinamento: semanas em TPUs. Fine-tuning: minutos/horas em GPU.
 
 ---
 
+# Arquitetura BERT: encoder stack
+
+<div class="grid grid-cols-2 gap-5 mt-3 text-sm">
+
+<div class="space-y-2">
+
+<div class="p-2 rounded bg-slate-700/60 border border-slate-500/40 text-xs font-mono text-center">
+[CLS] tok₁ tok₂ … tokₙ [SEP]
+</div>
+
+<div class="p-2 rounded bg-blue-900/30 border border-blue-500/30 text-xs">
+<strong class="text-blue-300">Embedding de entrada</strong><br>
+Token emb. + Segment emb. + Position emb. (learnable)<br>
+<span class="text-slate-400">→ soma elemento a elemento → dim 768</span>
+</div>
+
+<div class="space-y-1">
+<div class="p-1.5 rounded bg-amber-900/40 border border-amber-500/30 text-xs" v-click>
+<strong class="text-amber-300">Bloco Encoder × 12 (base) / × 24 (large)</strong>
+<div class="mt-1 grid grid-cols-2 gap-1 text-slate-300">
+<div>① Multi-Head Self-Attention</div><div class="text-slate-500">12 cabeças, d_k = 64</div>
+<div>② Add &amp; LayerNorm</div><div class="text-slate-500">residual + norm</div>
+<div>③ FFN: Linear → GeLU → Linear</div><div class="text-slate-500">768 → 3072 → 768</div>
+<div>④ Add &amp; LayerNorm</div><div class="text-slate-500">residual + norm</div>
+</div>
+</div>
+<div class="p-1.5 rounded bg-amber-900/30 border border-amber-500/20 text-xs opacity-80">Bloco Encoder × 12 …</div>
+<div class="p-1.5 rounded bg-amber-900/20 border border-amber-500/10 text-xs opacity-50">Bloco Encoder × 12 …</div>
+</div>
+
+<div class="p-2 rounded bg-slate-700/60 border border-slate-500/40 text-xs font-mono text-center">
+h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-400">(dim 768 cada)</span>
+</div>
+
+</div>
+
+<div class="space-y-3 text-xs" v-click>
+
+<div class="p-2 rounded bg-amber-900/20 border border-amber-500/30">
+<strong class="text-amber-300">BERT-base vs BERT-large</strong>
+<table class="w-full mt-1 text-slate-300" style="border-collapse:collapse">
+<tr class="border-b border-slate-600/40"><th class="text-left py-0.5 text-slate-400">Config</th><th class="text-right text-slate-400">base</th><th class="text-right text-slate-400">large</th></tr>
+<tr><td class="py-0.5">Camadas (L)</td><td class="text-right">12</td><td class="text-right">24</td></tr>
+<tr><td class="py-0.5">Dimensão (H)</td><td class="text-right">768</td><td class="text-right">1024</td></tr>
+<tr><td class="py-0.5">Cabeças (A)</td><td class="text-right">12</td><td class="text-right">16</td></tr>
+<tr><td class="py-0.5">FFN dim</td><td class="text-right">3072</td><td class="text-right">4096</td></tr>
+<tr class="border-t border-slate-600/40"><td class="py-0.5 font-semibold text-amber-300">Parâmetros</td><td class="text-right font-semibold text-amber-300">110M</td><td class="text-right font-semibold text-amber-300">340M</td></tr>
+</table>
+</div>
+
+<div class="p-2 rounded bg-blue-900/20 border border-blue-500/30" v-click>
+<strong class="text-blue-300">Três embeddings somados na entrada</strong>
+<div class="mt-1 space-y-1 text-slate-300">
+<div><span class="text-blue-400">Token:</span> lookup na tabela de 30k tokens (WordPiece)</div>
+<div><span class="text-violet-400">Segment:</span> A ou B — para pares de sentenças</div>
+<div><span class="text-emerald-400">Position:</span> learnable (≠ senos/cossenos do Transformer original)</div>
+</div>
+</div>
+
+<div class="p-2 rounded bg-slate-800/50 border border-slate-600/30" v-click>
+<strong class="text-slate-300">Por que GeLU no FFN?</strong><br>
+<span class="text-slate-400">GeLU (Gaussian Error Linear Unit) proporciona gradientes mais suaves que ReLU e empiricamente converge melhor em modelos de linguagem de grande escala.</span>
+</div>
+
+</div>
+
+</div>
+
+---
+
+# Fine-tuning BERT: estratégias e hiperparâmetros
+
+<div class="grid grid-cols-2 gap-5 mt-4 text-sm">
+
+<div class="space-y-3">
+
+<div class="p-3 rounded bg-amber-900/30 border border-amber-500/40" v-click>
+
+**Estratégia 1 — Encoder congelado**
+
+Congela todos os pesos do BERT. Treina apenas a cabeça de classificação.
+
+Vantagem: rápido, funciona com dezenas de exemplos.
+
+Desvantagem: não adapta representações à nova tarefa.
+
+</div>
+
+<div class="p-3 rounded bg-amber-900/20 border border-amber-500/30" v-click>
+
+**Estratégia 2 — Full fine-tuning**
+
+Atualiza todos os pesos (BERT + cabeça) com lr baixo (~2e-5).
+
+Melhor desempenho. Requer cuidado: lr alto destrói representações pré-treinadas (**catastrophic forgetting**).
+
+</div>
+
+<div class="p-3 rounded bg-amber-800/20 border border-amber-400/30" v-click>
+
+**Estratégia 3 — Layer-wise LR decay**
+
+Camadas mais profundas = lr menor. Camadas de saída = lr maior.
+
+Preserva representações gerais, adapta representações de alto nível.
+
+</div>
+
+</div>
+
+<div class="space-y-3 text-sm">
+
+<div class="p-3 rounded bg-slate-800/50 border border-slate-600/30" v-click>
+
+**Hiperparâmetros recomendados (Devlin et al., 2018)**
+
+```
+lr:           2e-5, 3e-5, 5e-5
+batch size:   16, 32
+epochs:       2, 3, 4
+warmup:       10% dos passos totais
+weight decay: 0.01
+```
+
+Fine-tuning em datasets pequenos (<5k exemplos) raramente beneficia de mais de 3 épocas.
+
+</div>
+
+<div class="p-3 rounded bg-violet-900/20 border border-violet-500/30" v-click>
+
+**Quando usar cada estratégia?**
+
+| Dados disponíveis | Estratégia |
+|---|---|
+| < 100 exemplos | Encoder congelado |
+| 100–5k exemplos | Full fine-tuning |
+| > 5k exemplos | Full fine-tuning + decay |
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # O token [CLS]: representação global
 
 <div class="grid grid-cols-2 gap-5 mt-4 text-sm">
