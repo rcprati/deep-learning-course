@@ -134,17 +134,17 @@ ViT, TabTransformer, and multimodality
 <div class="grid gap-x-3 mt-3 text-xs" style="grid-template-columns: 7rem 1fr 1fr 7rem 1fr">
 
 <div></div>
-<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/20 text-center text-slate-300">
-Same token →<br><strong>same vector</strong>
+<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/20 text-center text-blue-200">
+Same token →<br><strong class="text-blue-100">same vector</strong>
 </div>
-<div class="p-1.5 rounded bg-violet-900/20 border border-violet-500/20 text-center text-slate-300">
-Station[1] ≠ [6] ≠ [11]<br><strong>position encoded</strong>
+<div class="p-1.5 rounded bg-violet-900/20 border border-violet-500/20 text-center text-violet-200">
+Station[1] ≠ [6] ≠ [11]<br><strong class="text-violet-100">position encoded</strong>
 </div>
-<div class="p-1.5 rounded bg-orange-900/20 border border-orange-500/20 text-center text-slate-300">
-Each head:<br><strong>one relation</strong>
+<div class="p-1.5 rounded bg-orange-900/20 border border-orange-500/20 text-center text-orange-200">
+Each head:<br><strong class="text-orange-100">one relation</strong>
 </div>
-<div class="p-1.5 rounded bg-emerald-900/20 border border-emerald-500/20 text-center text-slate-300">
-Jacob ≠ train ≠ radio<br><strong>context integrated</strong>
+<div class="p-1.5 rounded bg-emerald-900/20 border border-emerald-500/20 text-center text-emerald-200">
+Jacob ≠ train ≠ radio<br><strong class="text-emerald-100">context integrated</strong>
 </div>
 
 </div>
@@ -575,32 +575,32 @@ h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-400">(dim 768 each)</span>
 
 </div>
 
-<div class="space-y-3 text-xs" v-click>
+<div class="space-y-1.5 text-xs" v-click>
 
-<div class="p-2 rounded bg-amber-900/20 border border-amber-500/30">
+<div class="p-1.5 rounded bg-amber-900/20 border border-amber-500/30">
 <strong class="text-amber-300">BERT-base vs BERT-large</strong>
-<table class="w-full mt-1 text-slate-300" style="border-collapse:collapse">
-<tr class="border-b border-slate-600/40"><th class="text-left py-0.5 text-slate-400">Config</th><th class="text-right text-slate-400">base</th><th class="text-right text-slate-400">large</th></tr>
+<table class="w-full mt-1 text-amber-100/80" style="border-collapse:collapse">
+<tr class="border-b border-amber-800/40"><th class="text-left py-0.5 text-amber-400/70">Config</th><th class="text-right text-amber-400/70">base</th><th class="text-right text-amber-400/70">large</th></tr>
 <tr><td class="py-0.5">Layers (L)</td><td class="text-right">12</td><td class="text-right">24</td></tr>
 <tr><td class="py-0.5">Hidden size (H)</td><td class="text-right">768</td><td class="text-right">1024</td></tr>
 <tr><td class="py-0.5">Heads (A)</td><td class="text-right">12</td><td class="text-right">16</td></tr>
 <tr><td class="py-0.5">FFN dim</td><td class="text-right">3072</td><td class="text-right">4096</td></tr>
-<tr class="border-t border-slate-600/40"><td class="py-0.5 font-semibold text-amber-300">Parameters</td><td class="text-right font-semibold text-amber-300">110M</td><td class="text-right font-semibold text-amber-300">340M</td></tr>
+<tr class="border-t border-amber-800/40"><td class="py-0.5 font-semibold text-amber-300">Parameters</td><td class="text-right font-semibold text-amber-300">110M</td><td class="text-right font-semibold text-amber-300">340M</td></tr>
 </table>
 </div>
 
-<div class="p-2 rounded bg-blue-900/20 border border-blue-500/30" v-click>
+<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/30">
 <strong class="text-blue-300">Three embeddings summed at input</strong>
-<div class="mt-1 space-y-1 text-slate-300">
-<div><span class="text-blue-400">Token:</span> lookup in 30k-token table (WordPiece)</div>
-<div><span class="text-violet-400">Segment:</span> A or B — for sentence pairs</div>
-<div><span class="text-emerald-400">Position:</span> learnable (≠ sine/cosine of original Transformer)</div>
+<div class="mt-1 space-y-0.5 text-blue-100/80">
+<div><span class="text-blue-300">Token:</span> lookup — 30k-token table (WordPiece)</div>
+<div><span class="text-violet-300">Segment:</span> A or B — sentence pairs</div>
+<div><span class="text-emerald-300">Position:</span> learnable (≠ sine/cosine of original Transformer)</div>
 </div>
 </div>
 
-<div class="p-2 rounded bg-slate-800/50 border border-slate-600/30" v-click>
-<strong class="text-slate-300">Why GeLU in the FFN?</strong><br>
-<span class="text-slate-400">GeLU (Gaussian Error Linear Unit) provides smoother gradients than ReLU and empirically converges better in large language models.</span>
+<div class="p-1.5 rounded bg-slate-700/40 border border-slate-500/30">
+<strong class="text-slate-200">Why GeLU in the FFN?</strong>
+<span class="text-slate-300"> Smoother gradients than ReLU; empirically converges better in LLMs.</span>
 </div>
 
 </div>
@@ -611,78 +611,65 @@ h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-400">(dim 768 each)</span>
 
 # Fine-tuning BERT: strategies and hyperparameters
 
-<div class="grid grid-cols-2 gap-5 mt-4 text-sm">
+<div class="grid grid-cols-2 gap-3 mt-2 text-sm">
 
-<div class="space-y-3">
+<div class="space-y-2">
 
-<div class="p-3 rounded bg-amber-900/30 border border-amber-500/40" v-click>
+<div class="p-2 rounded bg-amber-900/30 border border-amber-500/40" v-click>
 
 **Strategy 1 — Frozen encoder**
 
-Freeze all BERT weights. Train only the classification head.
-
-Advantage: fast, works with dozens of examples.
-
-Disadvantage: does not adapt representations to the new task.
+Freeze BERT, train only the classification head. Fast, works with dozens of examples; does not adapt representations.
 
 </div>
 
-<div class="p-3 rounded bg-amber-900/20 border border-amber-500/30" v-click>
+<div class="p-2 rounded bg-amber-900/20 border border-amber-500/30" v-click>
 
 **Strategy 2 — Full fine-tuning**
 
-Update all weights (BERT + head) with low lr (~2e-5).
-
-Best performance. Requires care: high lr destroys pre-trained representations (**catastrophic forgetting**).
+Update all weights with low lr (~2e-5). Best performance, but high lr causes **catastrophic forgetting**.
 
 </div>
 
-<div class="p-3 rounded bg-amber-800/20 border border-amber-400/30" v-click>
+<div class="p-2 rounded bg-amber-800/20 border border-amber-400/30" v-click>
 
 **Strategy 3 — Layer-wise LR decay**
 
-Deeper layers = smaller lr. Output layers = larger lr.
-
-Preserves general representations, adapts high-level ones.
+Deeper layers = smaller lr; output layers = larger lr. Preserves general representations, adapts the top.
 
 </div>
 
 </div>
 
-<div class="space-y-3 text-sm">
+<div class="space-y-2 text-sm">
 
-<div class="p-3 rounded bg-slate-800/50 border border-slate-600/30" v-click>
+<div class="p-2 rounded bg-slate-800/50 border border-slate-600/30" v-click>
 
 **Recommended hyperparameters (Devlin et al., 2018)**
 
 ```
 lr:           2e-5, 3e-5, 5e-5
 batch size:   16, 32
-epochs:       2, 3, 4
-warmup:       10% of total steps
-weight decay: 0.01
+epochs:       2–4   warmup: 10%   weight decay: 0.01
 ```
-
-Fine-tuning on small datasets (<5k examples) rarely benefits from more than 3 epochs.
 
 </div>
 
-<div class="p-3 rounded bg-violet-900/20 border border-violet-500/30" v-click>
+<div class="p-2 rounded bg-violet-900/20 border border-violet-500/30" v-click>
 
 **When to use each strategy?**
 
 | Available data | Strategy |
 |---|---|
 | < 100 examples | Frozen encoder |
-| 100–5k examples | Full fine-tuning |
-| > 5k examples | Full fine-tuning + decay |
+| 100–5k | Full fine-tuning |
+| > 5k | Full + layer-wise decay |
 
 </div>
 
 </div>
 
 </div>
-
 ---
 
 # The [CLS] token: global representation
@@ -733,15 +720,15 @@ In the Transformer, all tokens communicate via self-attention at every layer. [C
 
 <div class="mt-2 text-sm">
 
-The `[CLS]` embedding is great for classification, but **not ideal for semantic similarity between sentences**.
+The `[CLS]` embedding is great for classification, but **not ideal for semantic sentence similarity**.
 
-<div class="grid grid-cols-2 gap-3 mt-3 text-xs">
+<div class="grid grid-cols-2 gap-3 mt-2 text-xs">
 
 <div class="p-2 rounded bg-red-900/30 border border-red-500/30">
 
 **Limitation of [CLS] for similarity**
 
-Comparing N sentences with vanilla BERT requires N² inferences — infeasible for large-scale search. Moreover, cosine distance between `[CLS]` embeddings of two independent sequences **does not correlate well** with human semantic similarity.
+Comparing N sentences requires N² inferences. Also, cosine distance between `[CLS]` embeddings of independent sequences **does not correlate well** with human semantic similarity.
 
 </div>
 
@@ -749,15 +736,15 @@ Comparing N sentences with vanilla BERT requires N² inferences — infeasible f
 
 **Solution: Sentence-BERT** *(Reimers & Gurevych, 2019)*
 
-Fine-tunes BERT with a **siamese network** using sentence pairs labeled by similarity. Uses **mean pooling** (average of all token embeddings) instead of `[CLS]`.
+BERT trained with a **siamese network** on similarity-labeled pairs. Uses **mean pooling** instead of `[CLS]`.
 
-Result: sentence embeddings directly comparable by cosine distance — N inferences, not N².
-
-</div>
+Result: N inferences, not N². Embeddings comparable by cosine.
 
 </div>
 
-<div class="mt-3 p-2 rounded bg-slate-800/50 border border-slate-500/30 text-xs" v-click>
+</div>
+
+<div class="mt-2 p-2 rounded bg-slate-800/50 border border-slate-500/30 text-xs" v-click>
 
 **Siamese architecture:**
 
@@ -765,16 +752,14 @@ Result: sentence embeddings directly comparable by cosine distance — N inferen
 sentence A → BERT → mean pool → u ─┐
                                     ├─ concat(u, v, |u−v|) → similarity
 sentence B → BERT → mean pool → v ─┘
-       (shared weights)
+       (shared weights — trained with NLI)
 ```
-
-Trained on NLI (entailment / contradiction / neutral).
 
 </div>
 
 <div class="mt-2 p-2 rounded bg-indigo-900/30 border border-indigo-500/30 text-xs" v-click>
 
-**Why does mean pooling outperform `[CLS]`?** `[CLS]` is optimized for NSP — weak sentence-level supervision. Mean pooling preserves information from all tokens and, after fine-tuning with explicit similarity supervision, produces geometrically better-calibrated representations for cosine comparison.
+**Why does mean pooling outperform `[CLS]`?** `[CLS]` is optimized for NSP (weak supervision). Mean pooling preserves all token information; after fine-tuning with explicit similarity supervision, it produces better-calibrated representations for cosine comparison.
 
 </div>
 
@@ -944,45 +929,40 @@ layout: section
 
 # HuggingFace: the model ecosystem
 
-<div class="grid grid-cols-2 gap-5 mt-4 text-sm">
+<div class="grid grid-cols-2 gap-4 mt-3 text-sm">
 
-<div class="space-y-3">
+<div class="space-y-2">
 
-<div class="p-3 rounded bg-cyan-900/30 border border-cyan-500/40" v-click>
+<div class="p-2 rounded bg-cyan-900/30 border border-cyan-500/40" v-click>
 
 **The Hub**
 
-Central repository with 500k+ pretrained models, datasets, and demo spaces.
-
-Models for NLP, vision, audio, multimodal — in dozens of languages.
-
-Any researcher or company can publish and download models.
+500k+ pre-trained models, datasets and demo spaces — NLP, vision, audio, multimodal, dozens of languages. Anyone can publish and download.
 
 </div>
 
-<div class="p-3 rounded bg-cyan-900/20 border border-cyan-500/30" v-click>
+<div class="p-2 rounded bg-cyan-900/20 border border-cyan-500/30" v-click>
 
 **Typical workflow**
 
-1. Pick a model on the Hub for your task
-2. Load tokenizer + model with AutoTokenizer / AutoModel
-3. Add a task head (classification, NER, etc.)
-4. Fine-tune with your few labeled examples
+1. Choose a model on the Hub for your task
+2. Load with `AutoTokenizer` / `AutoModel`
+3. Add a task head (classification, NER…)
+4. Fine-tune with a few labeled examples
 
 </div>
 
 </div>
 
-<div class="p-3 rounded bg-slate-800/50 border border-slate-600/30 text-sm" v-click>
+<div class="p-2 rounded bg-slate-800/50 border border-slate-600/30 text-sm" v-click>
 
 **Key concept**
 
-For any text classification problem: use BERT (or a variant) as a pretrained encoder and train only the output head with your examples. No need for millions of data points — BERT already knows about language.
+Use BERT (or a variant) as a pre-trained encoder and train only the output head with your examples. No need for millions of data points — BERT already knows about language.
 
 </div>
 
 </div>
-
 ---
 
 # Code: HuggingFace Transformers
@@ -1178,11 +1158,11 @@ This enables **multimodal** models: combining text + image + table in the same a
 
 # Summary: what we learned today
 
-<div class="grid grid-cols-2 gap-5 mt-4 text-sm">
+<div class="grid grid-cols-2 gap-3 mt-3 text-sm">
 
-<div class="space-y-3">
+<div class="space-y-2">
 
-<div class="p-3 rounded bg-blue-900/30 border border-blue-500/40" v-click>
+<div class="p-2 rounded bg-blue-900/30 border border-blue-500/40" v-click>
 
 **Representations as knowledge**
 
@@ -1190,35 +1170,35 @@ Deep neural networks learn representation hierarchies. Transfer learning reuses 
 
 </div>
 
-<div class="p-3 rounded bg-violet-900/30 border border-violet-500/40" v-click>
+<div class="p-2 rounded bg-violet-900/30 border border-violet-500/40" v-click>
 
 **Self-Supervised Learning**
 
-Artificial labels created from data. Masking forces the model to learn language without human supervision.
+Artificial labels created from the data. Masking forces the model to learn language without human supervision.
 
 </div>
 
-<div class="p-3 rounded bg-amber-900/30 border border-amber-500/40" v-click>
+<div class="p-2 rounded bg-amber-900/30 border border-amber-500/40" v-click>
 
 **BERT and fine-tuning**
 
-Encoder pretrained on massive text. [CLS] token for classification; h_i per token for labeling. Adapt with few examples.
+Encoder pre-trained on massive text. `[CLS]` for classification; `h_i` per token for sequence labeling.
 
 </div>
 
 </div>
 
-<div class="space-y-3">
+<div class="space-y-2">
 
-<div class="p-3 rounded bg-cyan-900/30 border border-cyan-500/40" v-click>
+<div class="p-2 rounded bg-cyan-900/30 border border-cyan-500/40" v-click>
 
 **HuggingFace**
 
-500k+ ready-to-use models. Pipeline in 3 lines. Workflow: pick model → tokenizer → head → fine-tune.
+500k+ ready models. Pipeline in 3 lines: choose model → tokenizer → head → fine-tune.
 
 </div>
 
-<div class="p-3 rounded bg-emerald-900/30 border border-emerald-500/40" v-click>
+<div class="p-2 rounded bg-emerald-900/30 border border-emerald-500/40" v-click>
 
 **Transformers beyond NLP**
 
