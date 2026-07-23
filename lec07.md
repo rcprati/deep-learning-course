@@ -134,17 +134,17 @@ ViT, TabTransformer e multimodalidade
 <div class="grid gap-x-3 mt-3 text-xs" style="grid-template-columns: 7rem 1fr 1fr 7rem 1fr">
 
 <div></div>
-<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/20 text-center text-blue-200">
-Mesmo token →<br><strong class="text-blue-100">mesmo vetor</strong>
+<div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/20 text-center text-blue-700">
+Mesmo token →<br><strong class="text-blue-800">mesmo vetor</strong>
 </div>
-<div class="p-1.5 rounded bg-violet-900/20 border border-violet-500/20 text-center text-violet-200">
-Station[1] ≠ [6] ≠ [11]<br><strong class="text-violet-100">posição codificada</strong>
+<div class="p-1.5 rounded bg-violet-900/20 border border-violet-500/20 text-center text-violet-700">
+Station[1] ≠ [6] ≠ [11]<br><strong class="text-violet-800">posição codificada</strong>
 </div>
-<div class="p-1.5 rounded bg-orange-900/20 border border-orange-500/20 text-center text-orange-200">
-Cada cabeça:<br><strong class="text-orange-100">uma relação</strong>
+<div class="p-1.5 rounded bg-orange-900/20 border border-orange-500/20 text-center text-orange-700">
+Cada cabeça:<br><strong class="text-orange-800">uma relação</strong>
 </div>
-<div class="p-1.5 rounded bg-emerald-900/20 border border-emerald-500/20 text-center text-emerald-200">
-Jacob ≠ trem ≠ rádio<br><strong class="text-emerald-100">contexto integrado</strong>
+<div class="p-1.5 rounded bg-emerald-900/20 border border-emerald-500/20 text-center text-emerald-700">
+Jacob ≠ trem ≠ rádio<br><strong class="text-emerald-800">contexto integrado</strong>
 </div>
 
 </div>
@@ -550,15 +550,15 @@ Pré-treinamento: semanas em TPUs. Fine-tuning: minutos/horas em GPU.
 </div>
 
 <div class="p-2 rounded bg-blue-900/30 border border-blue-500/30 text-xs">
-<strong class="text-blue-300">Embedding de entrada</strong><br>
+<strong class="text-blue-700">Embedding de entrada</strong><br>
 Token emb. + Segment emb. + Position emb. (learnable)<br>
-<span class="text-slate-400">→ soma elemento a elemento → dim 768</span>
+<span class="text-slate-600">→ soma elemento a elemento → dim 768</span>
 </div>
 
 <div class="space-y-1">
 <div class="p-1.5 rounded bg-amber-900/40 border border-amber-500/30 text-xs" v-click>
-<strong class="text-amber-300">Bloco Encoder × 12 (base) / × 24 (large)</strong>
-<div class="mt-1 grid grid-cols-2 gap-1 text-slate-300">
+<strong class="text-amber-700">Bloco Encoder × 12 (base) / × 24 (large)</strong>
+<div class="mt-1 grid grid-cols-2 gap-1 text-slate-700">
 <div>① Multi-Head Self-Attention</div><div class="text-slate-500">12 cabeças, d_k = 64</div>
 <div>② Add &amp; LayerNorm</div><div class="text-slate-500">residual + norm</div>
 <div>③ FFN: Linear → GeLU → Linear</div><div class="text-slate-500">768 → 3072 → 768</div>
@@ -570,7 +570,7 @@ Token emb. + Segment emb. + Position emb. (learnable)<br>
 </div>
 
 <div class="p-2 rounded bg-slate-700/60 border border-slate-500/40 text-xs font-mono text-center">
-h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-400">(dim 768 cada)</span>
+h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-600">(dim 768 cada)</span>
 </div>
 
 </div>
@@ -578,29 +578,29 @@ h_CLS  h₁  h₂  …  hₙ  <span class="text-slate-400">(dim 768 cada)</span>
 <div class="space-y-1.5 text-xs" v-click>
 
 <div class="p-1.5 rounded bg-amber-900/20 border border-amber-500/30">
-<strong class="text-amber-300">BERT-base vs BERT-large</strong>
-<table class="w-full mt-1 text-amber-100/80" style="border-collapse:collapse">
-<tr class="border-b border-amber-800/40"><th class="text-left py-0.5 text-amber-400/70">Config</th><th class="text-right text-amber-400/70">base</th><th class="text-right text-amber-400/70">large</th></tr>
+<strong class="text-amber-700">BERT-base vs BERT-large</strong>
+<table class="w-full mt-1 text-amber-900" style="border-collapse:collapse">
+<tr class="border-b border-amber-800/40"><th class="text-left py-0.5 text-amber-600">Config</th><th class="text-right text-amber-600">base</th><th class="text-right text-amber-600">large</th></tr>
 <tr><td class="py-0.5">Camadas (L)</td><td class="text-right">12</td><td class="text-right">24</td></tr>
 <tr><td class="py-0.5">Dimensão (H)</td><td class="text-right">768</td><td class="text-right">1024</td></tr>
 <tr><td class="py-0.5">Cabeças (A)</td><td class="text-right">12</td><td class="text-right">16</td></tr>
 <tr><td class="py-0.5">FFN dim</td><td class="text-right">3072</td><td class="text-right">4096</td></tr>
-<tr class="border-t border-amber-800/40"><td class="py-0.5 font-semibold text-amber-300">Parâmetros</td><td class="text-right font-semibold text-amber-300">110M</td><td class="text-right font-semibold text-amber-300">340M</td></tr>
+<tr class="border-t border-amber-800/40"><td class="py-0.5 font-semibold text-amber-700">Parâmetros</td><td class="text-right font-semibold text-amber-700">110M</td><td class="text-right font-semibold text-amber-700">340M</td></tr>
 </table>
 </div>
 
 <div class="p-1.5 rounded bg-blue-900/20 border border-blue-500/30">
-<strong class="text-blue-300">Três embeddings somados na entrada</strong>
-<div class="mt-1 space-y-0.5 text-blue-100/80">
-<div><span class="text-blue-300">Token:</span> lookup — 30k tokens (WordPiece)</div>
-<div><span class="text-violet-300">Segment:</span> A ou B — pares de sentenças</div>
-<div><span class="text-emerald-300">Position:</span> learnable (≠ senos/cossenos do Transformer original)</div>
+<strong class="text-blue-700">Três embeddings somados na entrada</strong>
+<div class="mt-1 space-y-0.5 text-slate-700">
+<div><span class="text-blue-600">Token:</span> lookup — 30k tokens (WordPiece)</div>
+<div><span class="text-violet-600">Segment:</span> A ou B — pares de sentenças</div>
+<div><span class="text-emerald-600">Position:</span> learnable (≠ senos/cossenos do Transformer original)</div>
 </div>
 </div>
 
 <div class="p-1.5 rounded bg-slate-700/40 border border-slate-500/30">
-<strong class="text-slate-200">Por que GeLU no FFN?</strong>
-<span class="text-slate-300"> Gradientes mais suaves que ReLU; empiricamente converge melhor em LLMs.</span>
+<strong class="text-slate-800">Por que GeLU no FFN?</strong>
+<span class="text-slate-600"> Gradientes mais suaves que ReLU; empiricamente converge melhor em LLMs.</span>
 </div>
 
 </div>
