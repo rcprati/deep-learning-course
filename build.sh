@@ -32,18 +32,17 @@ fi
 
 # ── 4. Build ──────────────────────────────────────────────────────────────────
 cd "$TMP"
-echo "→ Buildando lec01 ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec01.md --out dist/lec01 --base /lec01/
-echo "→ Buildando lec02 ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec02.md --out dist/lec02 --base /lec02/
-echo "→ Buildando lec03 ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec03.md --out dist/lec03 --base /lec03/
-echo "→ Buildando lec01-en ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec01-en.md --out dist/lec01-en --base /lec01-en/
-echo "→ Buildando lec02-en ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec02-en.md --out dist/lec02-en --base /lec02-en/
-echo "→ Buildando lec03-en ..."
-node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build lec03-en.md --out dist/lec03-en --base /lec03-en/
+
+LECTURES=(lec01 lec02 lec03 lec04 lec05 lec06 lec07 lec01-en lec02-en lec03-en lec04-en lec05-en lec06-en lec07-en)
+
+for lec in "${LECTURES[@]}"; do
+  if [ ! -f "${lec}.md" ]; then
+    echo "⚠️  ${lec}.md não encontrado, pulando."
+    continue
+  fi
+  echo "→ Buildando ${lec} ..."
+  node "$TMP/node_modules/@slidev/cli/bin/slidev.mjs" build "${lec}.md" --out "dist/${lec}" --base "/${lec}/"
+done
 
 # ── 5. Copiar dist de volta ───────────────────────────────────────────────────
 echo "→ Copiando dist para $SRC/dist ..."

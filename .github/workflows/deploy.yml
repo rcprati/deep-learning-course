@@ -170,14 +170,14 @@ jobs:
 
           # Seção Português
           echo "<h2>🇧🇷 Português</h2><ul class='lessons-list'>" >> dist/index.html
-          for file in lec01.md lec02.md lec03.md lec04.md lec05.md lec06.md lec07.md; do
+          for file in lec01.md lec02.md lec03.md lec04.md lec05.md lec06.md lec07.md lec08.md; do
             [ -e "$file" ] && emit_card "$file"
           done
           echo "</ul>" >> dist/index.html
 
           # Seção English
           echo "<h2>🇺🇸 English</h2><ul class='lessons-list'>" >> dist/index.html
-          for file in lec01-en.md lec02-en.md lec03-en.md lec04-en.md lec05-en.md lec06-en.md lec07-en.md; do
+          for file in lec01-en.md lec02-en.md lec03-en.md lec04-en.md lec05-en.md lec06-en.md lec07-en.md lec08-en.md; do
             [ -e "$file" ] && emit_card "$file"
           done
           echo "</ul>" >> dist/index.html
