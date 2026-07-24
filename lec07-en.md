@@ -539,6 +539,93 @@ Pretraining: weeks on TPUs. Fine-tuning: minutes/hours on a single GPU.
 
 ---
 
+# BERT is bidirectional — what does that mean?
+
+<div class="grid grid-cols-2 gap-4 mt-3 text-sm">
+
+<div class="space-y-2">
+
+<div class="p-2.5 rounded bg-rose-900/20 border border-rose-500/40" v-click>
+
+**Unidirectional models (e.g. GPT)**
+
+When processing the word "bank" at position 4, the model only sees prior tokens:
+
+<div class="font-mono text-xs mt-2 text-center">
+<span class="text-slate-500">She went to the</span>
+<span class="bg-rose-900/40 px-1 rounded text-rose-700 font-bold"> bank </span>
+<span class="line-through text-slate-400">to deposit money</span>
+</div>
+
+The context to the **right** is blocked — necessary for text generation, but limiting for comprehension.
+
+</div>
+
+<div class="p-2.5 rounded bg-emerald-900/20 border border-emerald-500/40" v-click>
+
+**BERT: full bidirectional attention**
+
+When encoding "bank", the model sees **all** tokens:
+
+<div class="font-mono text-xs mt-2 text-center">
+<span class="text-blue-700">She went to the</span>
+<span class="bg-emerald-900/40 px-1 rounded text-emerald-700 font-bold"> bank </span>
+<span class="text-blue-700">to deposit money</span>
+</div>
+
+"deposit money" is decisive for disambiguation: financial bank, not a river bank.
+
+</div>
+
+</div>
+
+<div class="space-y-2">
+
+<div class="p-2.5 rounded bg-slate-800/40 border border-slate-500/30 text-xs" v-click>
+
+**Why does MLM allow bidirectionality?**
+
+In next-word-prediction (GPT), seeing the future would mean "copying the answer" — the model would simply read the next token directly.
+
+In MLM (BERT), the target token is **absent** from the input (`[MASK]`). Using context from both sides to predict the missing token is entirely legitimate — that is exactly what we want.
+
+</div>
+
+<div class="p-2.5 rounded bg-slate-800/40 border border-slate-500/30 text-xs" v-click>
+
+**Attention mask: the visual difference**
+
+<div class="grid grid-cols-2 gap-2 mt-1">
+<div>
+<div class="text-center text-slate-600 mb-1">GPT (causal)</div>
+<div class="font-mono text-center text-xs leading-tight">
+<div><span class="text-emerald-700">█</span><span class="text-slate-400">░░░</span></div>
+<div><span class="text-emerald-700">██</span><span class="text-slate-400">░░</span></div>
+<div><span class="text-emerald-700">███</span><span class="text-slate-400">░</span></div>
+<div><span class="text-emerald-700">████</span></div>
+</div>
+<div class="text-center text-slate-600 text-xs mt-1">lower triangular</div>
+</div>
+<div>
+<div class="text-center text-slate-600 mb-1">BERT (bidirectional)</div>
+<div class="font-mono text-center text-xs leading-tight">
+<div><span class="text-blue-700">████</span></div>
+<div><span class="text-blue-700">████</span></div>
+<div><span class="text-blue-700">████</span></div>
+<div><span class="text-blue-700">████</span></div>
+</div>
+<div class="text-center text-slate-600 text-xs mt-1">full matrix</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+---
+
 # BERT Architecture: encoder stack
 
 <div class="grid grid-cols-2 gap-5 mt-3 text-sm">
